@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KrisAI — Register</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .auth-wrap {
+            max-width: 460px;
+            margin: 10vh auto;
+            padding: 24px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .35)
+        }
+
+        .auth-wrap h1 {
+            margin: 0 0 8px
+        }
+
+        .auth-wrap p {
+            margin: 0 0 18px;
+            color: var(--muted)
+        }
+
+        .auth-actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .link {
+            color: #7dd3fc;
+            text-decoration: none
+        }
+
+        #bonusModal[style*="display: flex"] {
+            display: flex !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="center-wrapper">
+        <div class="auth-wrap ui-card">
+            <h1>Daftar</h1>
+            <p>Buat akun baru dan dapatkan bonus 500 token gratis!</p>
+            <form id="registerForm" class="form-grid">
+                <div class="field full">
+                    <label>Username</label>
+                    <input id="regUsername" type="text" placeholder="username Anda" required />
+                </div>
+                <div class="field full">
+                    <label>Email</label>
+                    <input id="regEmail" type="email" placeholder="you@example.com" required />
+                </div>
+                <div class="field full">
+                    <label>Password</label>
+                    <input id="regPassword" type="password" placeholder="••••••••" required />
+                </div>
+                <div class="auth-actions full">
+                    <a class="link" href="login.html">Sudah punya akun?</a>
+                    <button class="primary-btn" type="submit">Daftar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bonus Popup Modal -->
+    <div id="bonusModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 9999;">
+        <div
+            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 40px; text-align: center; max-width: 400px; color: white; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
+            <h2 style="margin: 0 0 16px; font-size: 28px;">Selamat Bergabung!</h2>
+            <p style="margin: 0 0 24px; font-size: 16px; opacity: 0.95;">Anda mendapatkan bonus</p>
+            <div style="font-size: 48px; font-weight: bold; margin: 0 0 24px;">💎 500 Token</div>
+            <p style="margin: 0 0 32px; font-size: 14px; opacity: 0.9;">Gunakan untuk mulai membuat cerita, chat AI, dan
+                fitur lainnya!</p>
+            <button id="bonusBtn"
+                style="background: white; color: #667eea; border: none; padding: 12px 32px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s;">
+                Mulai Sekarang
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Handle bonus modal close
+        document.getElementById('bonusBtn')?.addEventListener('click', () => {
+            document.getElementById('bonusModal').style.display = 'none';
+            window.location.href = '/index.html';
+        });
+    </script>
+</body>
+
+</html>

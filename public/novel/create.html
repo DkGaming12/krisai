@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KrisAI — Buat Novel</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="app">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar novel-sidebar">
+      <div class="logo">KrisAI</div>
+
+      <nav class="menu">
+        <div class="menu-section-label">Umum</div>
+        <a href="../index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="../chat.html" class="menu-item">💬 Chat AI</a>
+
+        <div class="menu-divider"></div>
+        <div class="menu-section-label">Novel Suite</div>
+        <a href="create.html" class="menu-item active">✍️ Buat Novel</a>
+        <a href="continue.html" class="menu-item">▶️ Lanjutkan Cerita</a>
+        <a href="outline.html" class="menu-item">🧩 Outline & Plot</a>
+        <a href="character.html" class="menu-item">🧍 Karakter</a>
+        <a href="world.html" class="menu-item">🌍 World Building</a>
+
+        <div class="menu-divider"></div>
+        <div class="menu-section-label">Fitur Lain</div>
+        <a href="../cerpen.html" class="menu-item">📚 Cerpen</a>
+        <a href="../scenario.html" class="menu-item">🎬 Skenario</a>
+        <a href="../rewrite.html" class="menu-item">🔄 Rewrite</a>
+        <a href="../editor.html" class="menu-item">🧠 Editor AI</a>
+        <a href="../history.html" class="menu-item">🗂️ History</a>
+        <a href="../topup.html" class="menu-item">💰 Top Up</a>
+        <a href="../settings.html" class="menu-item">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main novel-main">
+
+      <div class="center-wrapper">
+
+        <section class="novel-hero">
+          <div>
+            <div class="eyebrow">Novel Suite · Bab 1</div>
+            <h1>Buat Novel Baru</h1>
+            <p>Rancang premis, tokoh, dan nada cerita. KrisAI akan menulis bab pembuka yang rapi dan konsisten dengan
+              arahanmu.</p>
+            <div class="hero-actions">
+              <a class="ghost-btn" href="outline.html">🧩 Bikin outline dulu</a>
+              <a class="ghost-btn" href="character.html">🧍 Susun karakter</a>
+            </div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-item">
+              <p class="meta-title">Durasi tulis</p>
+              <div class="meta-value">± 8 detik</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Panjang bab</p>
+              <div class="meta-value">1k–2k kata</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Bahasa</p>
+              <div class="meta-value">Indonesia</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Gaya default</p>
+              <div class="meta-value">Naratif modern</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="novel-grid">
+
+          <section class="glass-card">
+            <div class="section-header">
+              <h3>Detail Cerita</h3>
+              <div class="chips">
+                <span class="chip">Bab pembuka</span>
+                <span class="chip">Tone konsisten</span>
+              </div>
+            </div>
+            <p class="section-subtext">Isi elemen utama supaya AI paham arah cerita, tokoh, dan rasa yang mau dibangun.
+            </p>
+
+            <div class="form-grid">
+              <div class="field">
+                <label>Judul Novel</label>
+                <input type="text" placeholder="Orbit Terakhir / Senja di Kota Hujan">
+              </div>
+
+              <div class="field">
+                <label>Genre</label>
+                <select>
+                  <option>Fantasi</option>
+                  <option>Sci-Fi</option>
+                  <option>Romance</option>
+                  <option>Drama</option>
+                  <option>Horor</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Tema Utama</label>
+                <input type="text" placeholder="Takdir · kehilangan · harapan">
+              </div>
+
+              <div class="field">
+                <label>Tokoh Utama</label>
+                <input type="text" placeholder="Nama, sifat kunci, tujuan pribadi">
+              </div>
+
+              <div class="field">
+                <label>Sudut Pandang</label>
+                <select>
+                  <option>Orang Pertama</option>
+                  <option>Orang Ketiga</option>
+                  <option>Campuran POV</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Gaya Bahasa</label>
+                <select>
+                  <option>Naratif</option>
+                  <option>Puitis</option>
+                  <option>Ringan</option>
+                  <option>Dramatis</option>
+                  <option>Humor</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Panjang Cerita</label>
+                <select>
+                  <option>1000 kata</option>
+                  <option>1500 kata</option>
+                  <option>2000+ kata</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Rasa Emosi</label>
+                <select>
+                  <option>Hangat & intim</option>
+                  <option>Menegangkan</option>
+                  <option>Melankolis</option>
+                  <option>Optimistis</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label>Premis & Hook</label>
+                <textarea rows="3"
+                  placeholder="Konflik awal, janji cerita, atau rahasia yang ingin diungkap di bab pertama"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Catatan Khusus</label>
+                <textarea rows="3"
+                  placeholder="Hal yang harus muncul / hal yang dihindari, tone, pacing, rating, dsb"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="primary-btn">✨ Buat Bab Pertama</button>
+            </div>
+          </section>
+
+          <section class="glass-card">
+            <div class="section-header">
+              <h3>Checklist Bab Pertama</h3>
+              <span class="chip">Opsional</span>
+            </div>
+            <ul class="bullet-list">
+              <li>Perkenalkan tokoh utama + motivasi awal dalam 2 paragraf.</li>
+              <li>Tampilkan suasana dan konflik pemicu, jangan semua lore di awal.</li>
+              <li>Pastikan hook di paragraf 1-2 menarik pembaca lanjut.</li>
+              <li>Batasi 1 POV di bab pembuka agar fokus.</li>
+            </ul>
+            <div class="mini-stat">
+              <span>Target pacing</span>
+              <strong>4-6 segmen</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Dialog : Narasi</span>
+              <strong>40% : 60%</strong>
+            </div>
+          </section>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="../js/app.js"></script>
+
+</body>
+
+</html>

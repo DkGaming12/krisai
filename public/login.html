@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KrisAI — Login</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .auth-wrap {
+            max-width: 420px;
+            margin: 10vh auto;
+            padding: 24px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .35)
+        }
+
+        .auth-wrap h1 {
+            margin: 0 0 8px
+        }
+
+        .auth-wrap p {
+            margin: 0 0 18px;
+            color: var(--muted)
+        }
+
+        .auth-actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .link {
+            color: #7dd3fc;
+            text-decoration: none
+        }
+    </style>
+</head>
+
+<body>
+    <div class="center-wrapper">
+        <div class="auth-wrap ui-card">
+            <h1>Masuk</h1>
+            <p>Masukkan username atau email dan password Anda.</p>
+            <form id="loginForm" class="form-grid">
+                <div class="field full">
+                    <label>Username atau Email</label>
+                    <input id="loginCredential" type="text" placeholder="username / email" required />
+                </div>
+                <div class="field full">
+                    <label>Password</label>
+                    <input id="loginPassword" type="password" placeholder="••••••••" required />
+                </div>
+                <div class="auth-actions full">
+                    <a class="link" href="register.html">Buat akun</a>
+                    <button class="primary-btn" type="submit">Masuk</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

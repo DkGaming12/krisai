@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KrisAI — Settings</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="app">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+      <div class="logo">KrisAI</div>
+
+      <nav class="menu">
+        <div class="menu-section-label">Menu Utama</div>
+        <a href="index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="chat.html" class="menu-item">💬 Chat AI</a>
+
+        <div class="menu-section-label">Kreasi</div>
+        <a href="novel/create.html" class="menu-item">✍️ Novel AI</a>
+        <a href="cerpen.html" class="menu-item">📚 Cerpen</a>
+        <a href="scenario.html" class="menu-item">🎬 Skenario</a>
+
+        <div class="menu-section-label">Tools</div>
+        <a href="rewrite.html" class="menu-item">🔄 Rewrite</a>
+        <a href="editor.html" class="menu-item">🧠 Editor AI</a>
+        <a href="history.html" class="menu-item">🕘 History</a>
+        <a href="topup.html" class="menu-item">💰 Top Up</a>
+        <a href="settings.html" class="menu-item active">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main">
+
+      <header class="header">
+        <h2>Settings</h2>
+        <p>Atur preferensi penggunaan KrisAI.</p>
+      </header>
+
+      <section class="content">
+
+        <form>
+
+          <label>Nama AI</label>
+          <input type="text" value="KrisAI" disabled>
+
+          <label>Bahasa</label>
+          <select>
+            <option selected>Bahasa Indonesia</option>
+            <option>English</option>
+          </select>
+
+          <label>Gaya Bahasa Default</label>
+          <select>
+            <option>Naratif</option>
+            <option>Puitis</option>
+            <option>Ringan</option>
+            <option>Dramatis</option>
+          </select>
+
+          <label>Tema</label>
+          <select>
+            <option selected>Dark Mode</option>
+            <option>Light Mode</option>
+          </select>
+
+          <button type="button">💾 Simpan Pengaturan</button>
+
+          <hr style="margin:30px 0; border-color:#1e293b;">
+
+          <button type="button" style="background:#7f1d1d;color:#fecaca;">
+            🗑️ Reset Semua Data
+          </button>
+
+        </form>
+
+      </section>
+
+    </main>
+
+  </div>
+
+</body>
+
+</html>

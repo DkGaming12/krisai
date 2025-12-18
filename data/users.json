@@ -1,0 +1,11 @@
+[
+  {
+    "id": "988d9d6a-9aa1-49ce-a9a9-79b85032535f",
+    "username": "Kristian",
+    "email": "didikpurnomoipung21@gmail.com",
+    "passwordHash": "$2a$10$wmnqOPb7paVWvq.tbOMLZOF0B9J3ldDCeHFJKWLNz5q.QKFFOHoom",
+    "tokens": 998,
+    "isOwner": true,
+    "createdAt": 1766057497873
+  }
+]

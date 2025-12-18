@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>KrisAI — Chat AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">KrisAI</div>
+      <nav class="menu">
+        <div class="menu-section-label">Menu Utama</div>
+        <a href="index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="chat.html" class="menu-item active">💬 Chat AI</a>
+
+        <div class="menu-section-label">Kreasi</div>
+        <a href="novel/create.html" class="menu-item">✍️ Novel AI</a>
+        <a href="cerpen.html" class="menu-item">📚 Cerpen</a>
+        <a href="scenario.html" class="menu-item">🎬 Skenario</a>
+
+        <div class="menu-section-label">Tools</div>
+        <a href="rewrite.html" class="menu-item">🔄 Rewrite</a>
+        <a href="editor.html" class="menu-item">🧠 Editor AI</a>
+        <a href="history.html" class="menu-item">🕘 History</a>
+        <a href="topup.html" class="menu-item">💰 Top Up</a>
+        <a href="settings.html" class="menu-item">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <div class="content-card chat-card">
+
+        <div class="card-header">
+          <h1>Chat AI</h1>
+          <p>Ngobrol langsung dengan KrisAI.</p>
+        </div>
+
+        <!-- CHAT BOX -->
+        <div id="chatBox" class="chat-box">
+          <div class="msg ai">
+            Hai! Aku KrisAI. Ada yang bisa aku bantu?
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <form id="chatForm" class="chat-form">
+          <input type="text" id="chatInput" placeholder="Tanya apa saja ke KrisAI..." autocomplete="off" required />
+          <button type="submit">Kirim</button>
+        </form>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- WAJIB -->
+  <script src="js/app.js"></script>
+</body>
+
+</html>
+
+
+

@@ -1,0 +1,1015 @@
+import express from "express";
+import fetch from "node-fetch";
+import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from "uuid";
+import midtransClient from "midtrans-client";
+
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+app.use(express.static("public"));
+
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-please-change";
+const DEFAULT_TOKENS = Number(process.env.DEFAULT_TOKENS || 100);
+const USERS_FILE = path.join(process.cwd(), "data", "users.json");
+const TRANSACTIONS_FILE = path.join(process.cwd(), "data", "transactions.json");
+
+// Midtrans Configuration
+const snap = new midtransClient.Snap({
+  isProduction: false,
+  serverKey: process.env.MIDTRANS_SERVER_KEY || "",
+  clientKey: process.env.MIDTRANS_CLIENT_KEY || "",
+});
+
+// Token Packages (Rupiah)
+const TOKEN_PACKAGES = [
+  { id: "pack_100", tokens: 100, price: 10000, label: "Paket Pemula" },
+  {
+    id: "pack_500",
+    tokens: 500,
+    price: 45000,
+    label: "Paket Standar",
+    discount: "10%",
+  },
+  {
+    id: "pack_1000",
+    tokens: 1000,
+    price: 80000,
+    label: "Paket Pro",
+    discount: "20%",
+  },
+  {
+    id: "pack_2500",
+    tokens: 2500,
+    price: 175000,
+    label: "Paket Premium",
+    discount: "30%",
+  },
+  {
+    id: "pack_5000",
+    tokens: 5000,
+    price: 300000,
+    label: "Paket Ultimate",
+    discount: "40%",
+  },
+];
+
+function readUsers() {
+  try {
+    if (!fs.existsSync(USERS_FILE)) return [];
+    const raw = fs.readFileSync(USERS_FILE, "utf-8");
+    return JSON.parse(raw || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function writeUsers(arr) {
+  try {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(arr, null, 2), "utf-8");
+  } catch (e) {
+    console.error("Failed write users:", e);
+  }
+}
+
+function readTransactions() {
+  try {
+    if (!fs.existsSync(TRANSACTIONS_FILE)) return [];
+    const raw = fs.readFileSync(TRANSACTIONS_FILE, "utf-8");
+    return JSON.parse(raw || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function writeTransactions(arr) {
+  try {
+    fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(arr, null, 2), "utf-8");
+  } catch (e) {
+    console.error("Failed write transactions:", e);
+  }
+}
+
+function addTokens(userId, amount) {
+  const users = readUsers();
+  const idx = users.findIndex((u) => u.id === userId);
+  if (idx < 0) return false;
+  users[idx].tokens = (users[idx].tokens || 0) + amount;
+  writeUsers(users);
+  return true;
+}
+
+function signToken(payload) {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+}
+
+function authRequired(req, res, next) {
+  const auth = req.headers.authorization || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
+  if (!token) return res.status(401).json({ error: "Unauthorized" });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    return next();
+  } catch (e) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+}
+
+function ownerRequired(req, res, next) {
+  const auth = req.headers.authorization || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
+  if (!token) return res.status(401).json({ error: "Unauthorized" });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (!decoded.isOwner)
+      return res.status(403).json({ error: "Forbidden: Owner only" });
+    req.user = decoded;
+    return next();
+  } catch (e) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+}
+
+function getUserById(id) {
+  const users = readUsers();
+  return users.find((u) => u.id === id);
+}
+
+function getAllUsers() {
+  const users = readUsers();
+  return users.map((u) => ({
+    id: u.id,
+    username: u.username,
+    email: u.email,
+    tokens: u.tokens,
+    isOwner: u.isOwner || false,
+    createdAt: u.createdAt,
+  }));
+}
+
+function updateUser(user) {
+  const users = readUsers();
+  const idx = users.findIndex((u) => u.id === user.id);
+  if (idx >= 0) users[idx] = user;
+  else users.push(user);
+  writeUsers(users);
+}
+
+function deductTokens(userId, amount) {
+  const users = readUsers();
+  const idx = users.findIndex((u) => u.id === userId);
+  if (idx < 0) return { ok: false, tokens: 0 };
+  const user = users[idx];
+  if ((user.tokens || 0) < amount)
+    return { ok: false, tokens: user.tokens || 0 };
+  user.tokens = (user.tokens || 0) - amount;
+  users[idx] = user;
+  writeUsers(users);
+  return { ok: true, tokens: user.tokens };
+}
+
+/* =========================
+   SYSTEM PROMPT
+========================= */
+const SYSTEM_PROMPT = `
+Kamu adalah KrisAI, asisten AI penulisan kreatif berbahasa Indonesia.
+Jangan menyebut dirimu ChatGPT.
+`;
+
+/* =========================
+   HEALTHCHECK
+========================= */
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true });
+});
+
+/* =========================
+   AUTH
+========================= */
+app.post("/api/auth/register", (req, res) => {
+  try {
+    const { username, email, password } = req.body || {};
+    if (!username || !email || !password)
+      return res
+        .status(400)
+        .json({ error: "Username, email & password required" });
+    const users = readUsers();
+    const existsEmail = users.find(
+      (u) => u.email.toLowerCase() === String(email).toLowerCase()
+    );
+    const existsUsername = users.find(
+      (u) => u.username.toLowerCase() === String(username).toLowerCase()
+    );
+    if (existsEmail)
+      return res.status(409).json({ error: "Email already registered" });
+    if (existsUsername)
+      return res.status(409).json({ error: "Username already taken" });
+    const user = {
+      id: uuidv4(),
+      username,
+      email,
+      passwordHash: bcrypt.hashSync(password, 10),
+      tokens: DEFAULT_TOKENS + 500, // Bonus 500 token untuk member baru
+      isOwner: false,
+      createdAt: Date.now(),
+    };
+    users.push(user);
+    writeUsers(users);
+    const token = signToken({
+      id: user.id,
+      username: user.username,
+      isOwner: false,
+    });
+    return res.json({
+      token,
+      bonusTokens: 500, // Flag untuk popup bonus
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        tokens: user.tokens,
+        isOwner: false,
+      },
+    });
+  } catch (e) {
+    return res.status(500).json({ error: "Register failed" });
+  }
+});
+
+app.post("/api/auth/login", (req, res) => {
+  try {
+    const { credential, password } = req.body || {};
+    const users = readUsers();
+    const user = users.find(
+      (u) =>
+        u.email.toLowerCase() === String(credential || "").toLowerCase() ||
+        u.username.toLowerCase() === String(credential || "").toLowerCase()
+    );
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    const ok = bcrypt.compareSync(password || "", user.passwordHash);
+    if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+    const token = signToken({
+      id: user.id,
+      username: user.username,
+      isOwner: user.isOwner || false,
+    });
+    return res.json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        tokens: user.tokens,
+        isOwner: user.isOwner || false,
+      },
+    });
+  } catch (e) {
+    return res.status(500).json({ error: "Login failed" });
+  }
+});
+
+app.get("/api/auth/me", authRequired, (req, res) => {
+  const user = getUserById(req.user.id);
+  if (!user) return res.status(404).json({ error: "User not found" });
+  res.json({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    tokens: user.tokens,
+    isOwner: user.isOwner || false,
+  });
+});
+
+app.post("/api/auth/logout", authRequired, (req, res) => {
+  // Client will drop token; server simply acknowledges
+  res.json({ ok: true });
+});
+
+app.get("/api/balance", authRequired, (req, res) => {
+  const user = getUserById(req.user.id);
+  if (!user) return res.status(404).json({ error: "User not found" });
+  res.json({ tokens: user.tokens });
+});
+
+/* =========================
+   ADMIN: USER MANAGEMENT (OWNER ONLY)
+========================= */
+app.get("/api/admin/users", ownerRequired, (req, res) => {
+  const users = getAllUsers();
+  res.json({ users });
+});
+
+app.post("/api/admin/user/:userId/tokens", ownerRequired, (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { amount } = req.body || {};
+    if (!amount || typeof amount !== "number") {
+      return res.status(400).json({ error: "Invalid amount" });
+    }
+
+    const users = readUsers();
+    const idx = users.findIndex((u) => u.id === userId);
+    if (idx < 0) return res.status(404).json({ error: "User not found" });
+
+    users[idx].tokens = Math.max(0, (users[idx].tokens || 0) + amount);
+    writeUsers(users);
+
+    res.json({
+      username: users[idx].username,
+      tokens: users[idx].tokens,
+    });
+  } catch (e) {
+    res.status(500).json({ error: "Failed to update tokens" });
+  }
+});
+
+app.delete("/api/admin/user/:userId", ownerRequired, (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (userId === req.user.id) {
+      return res.status(400).json({ error: "Cannot delete yourself" });
+    }
+
+    const users = readUsers();
+    const filtered = users.filter((u) => u.id !== userId);
+    if (filtered.length === users.length) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    writeUsers(filtered);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+});
+
+/* =========================
+   TOPUP TOKEN - PAYMENT
+========================= */
+// Get available token packages
+app.get("/api/topup/packages", authRequired, (req, res) => {
+  res.json({ packages: TOKEN_PACKAGES });
+});
+
+// Create payment transaction
+app.post("/api/topup/create", authRequired, async (req, res) => {
+  try {
+    const { packageId } = req.body;
+    const user = getUserById(req.user.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const pkg = TOKEN_PACKAGES.find((p) => p.id === packageId);
+    if (!pkg) return res.status(400).json({ error: "Invalid package" });
+
+    const orderId = `TOPUP-${Date.now()}-${user.id.slice(0, 8)}`;
+
+    const parameter = {
+      transaction_details: {
+        order_id: orderId,
+        gross_amount: pkg.price,
+      },
+      item_details: [
+        {
+          id: pkg.id,
+          price: pkg.price,
+          quantity: 1,
+          name: `${pkg.label} - ${pkg.tokens} Tokens`,
+        },
+      ],
+      customer_details: {
+        first_name: user.username,
+        email: user.email,
+      },
+      enabled_payments: ["shopeepay", "dana", "seabank_transfer"],
+    };
+
+    const transaction = await snap.createTransaction(parameter);
+
+    // Save transaction to database
+    const transactions = readTransactions();
+    transactions.push({
+      orderId,
+      userId: user.id,
+      packageId: pkg.id,
+      tokens: pkg.tokens,
+      amount: pkg.price,
+      status: "pending",
+      createdAt: Date.now(),
+      snapToken: transaction.token,
+      snapUrl: transaction.redirect_url,
+    });
+    writeTransactions(transactions);
+
+    res.json({
+      orderId,
+      snapToken: transaction.token,
+      snapUrl: transaction.redirect_url,
+      package: pkg,
+    });
+  } catch (error) {
+    console.error("Payment error:", error);
+    res.status(500).json({ error: "Failed to create payment" });
+  }
+});
+
+// Webhook for payment notification from Midtrans
+app.post("/api/topup/notification", async (req, res) => {
+  try {
+    const notification = req.body;
+    const orderId = notification.order_id;
+    const transactionStatus = notification.transaction_status;
+    const fraudStatus = notification.fraud_status;
+
+    console.log(`Payment notification: ${orderId} - ${transactionStatus}`);
+
+    const transactions = readTransactions();
+    const idx = transactions.findIndex((t) => t.orderId === orderId);
+
+    if (idx < 0) {
+      return res.status(404).json({ error: "Transaction not found" });
+    }
+
+    const transaction = transactions[idx];
+
+    // Handle payment status
+    if (transactionStatus === "capture" || transactionStatus === "settlement") {
+      if (fraudStatus === "accept" || !fraudStatus) {
+        // Payment success - add tokens
+        transactions[idx].status = "success";
+        transactions[idx].completedAt = Date.now();
+        writeTransactions(transactions);
+
+        addTokens(transaction.userId, transaction.tokens);
+        console.log(
+          `✅ Token added: ${transaction.tokens} to user ${transaction.userId}`
+        );
+      }
+    } else if (transactionStatus === "pending") {
+      transactions[idx].status = "pending";
+      writeTransactions(transactions);
+    } else if (["cancel", "deny", "expire"].includes(transactionStatus)) {
+      transactions[idx].status = "failed";
+      transactions[idx].completedAt = Date.now();
+      writeTransactions(transactions);
+    }
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Notification error:", error);
+    res.status(500).json({ error: "Notification processing failed" });
+  }
+});
+
+// Get user transaction history
+app.get("/api/topup/history", authRequired, (req, res) => {
+  try {
+    const transactions = readTransactions();
+    const userTransactions = transactions
+      .filter((t) => t.userId === req.user.id)
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((t) => ({
+        orderId: t.orderId,
+        tokens: t.tokens,
+        amount: t.amount,
+        status: t.status,
+        createdAt: t.createdAt,
+        completedAt: t.completedAt,
+      }));
+    res.json({ transactions: userTransactions });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to get transaction history" });
+  }
+});
+
+// Check transaction status
+app.get("/api/topup/status/:orderId", authRequired, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const transactions = readTransactions();
+    const transaction = transactions.find(
+      (t) => t.orderId === orderId && t.userId === req.user.id
+    );
+
+    if (!transaction) {
+      return res.status(404).json({ error: "Transaction not found" });
+    }
+
+    res.json({
+      orderId: transaction.orderId,
+      status: transaction.status,
+      tokens: transaction.tokens,
+      amount: transaction.amount,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to check status" });
+  }
+});
+
+/* =========================
+   CHAT AI (DIKUNCI)
+========================= */
+app.post("/api/chat", authRequired, async (req, res) => {
+  try {
+    const COST = 1;
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+    const { message } = req.body;
+    if (!message) return res.json({ reply: "Pesan kosong." });
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: message },
+          ],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices[0].message.content,
+      tokens: resDeduct.tokens,
+    });
+  } catch (err) {
+    res.json({ reply: "❌ Chat error." });
+  }
+});
+
+/* =========================
+   CERPEN (DIKUNCI)
+========================= */
+app.post("/api/cerpen", authRequired, async (req, res) => {
+  try {
+    const { judul, tema, genre, panjang = 500 } = req.body;
+
+    // Dynamic cost: base 3 + (word count / 100) rounded up
+    const targetWords = parseInt(panjang) || 500;
+    const COST = Math.max(3, Math.ceil(3 + targetWords / 100));
+
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+
+    const prompt = `
+Buat cerpen bahasa Indonesia.
+Judul: ${judul}
+Tema: ${tema}
+Genre: ${genre}
+Panjang ${targetWords} kata.
+`;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices[0].message.content,
+      tokens: resDeduct.tokens,
+    });
+  } catch {
+    res.json({ reply: "❌ Cerpen error." });
+  }
+});
+
+/* =========================
+   SKENARIO (FITUR BARU)
+========================= */
+app.post("/api/skenario", authRequired, async (req, res) => {
+  try {
+    const { judul, genre, deskripsi } = req.body;
+
+    // Dynamic cost based on description length
+    const descWords = (deskripsi || "").split(/\s+/).length;
+    const COST = Math.max(4, Math.ceil(4 + descWords / 50));
+
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+
+    const prompt = `
+Buat skenario film berbahasa Indonesia.
+
+Judul: ${judul}
+Genre: ${genre}
+Deskripsi:
+${deskripsi}
+
+Gunakan format:
+SCENE
+AKSI
+DIALOG
+`;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices[0].message.content,
+      tokens: resDeduct.tokens,
+    });
+  } catch {
+    res.json({ reply: "❌ Skenario error." });
+  }
+});
+
+/* =========================
+   REWRITE / EDITOR (BARU)
+========================= */
+app.post("/api/rewrite", authRequired, async (req, res) => {
+  try {
+    const {
+      teks,
+      fokus = "Keseluruhan tulisan",
+      gaya = "Konstruktif",
+    } = req.body || {};
+    if (!teks) return res.json({ reply: "Masukkan teks untuk direview." });
+
+    // Dynamic cost based on text length
+    const wordCount = teks.split(/\s+/).length;
+    const COST = Math.max(2, Math.ceil(2 + wordCount / 100));
+
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+
+    const prompt = `Anda adalah editor bahasa Indonesia. Fokus: ${fokus}. Gaya kritik: ${gaya}.
+Berikan evaluasi ringkas, poin perbaikan, dan contoh perbaikan untuk teks berikut:
+\n\n${teks}`;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices?.[0]?.message?.content || "(kosong)",
+      tokens: resDeduct.tokens,
+    });
+  } catch (e) {
+    res.json({ reply: "❌ Rewrite error." });
+  }
+});
+
+/* =========================
+   NOVEL SUITE - CREATE
+========================= */
+app.post("/api/novel/create", authRequired, async (req, res) => {
+  try {
+    const {
+      judul,
+      genre,
+      tema,
+      tokohUtama,
+      setting,
+      konflik,
+      panjangBab = 800,
+    } = req.body;
+
+    // Dynamic cost: base 5 + (target words / 100)
+    const targetWords = parseInt(panjangBab) || 800;
+    const COST = Math.max(5, Math.ceil(5 + targetWords / 100));
+
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+
+    const prompt = `Buat bab pembuka novel berbahasa Indonesia dengan detail:
+Judul: ${judul}
+Genre: ${genre}
+Tema: ${tema}
+Tokoh Utama: ${tokohUtama}
+Setting: ${setting}
+Konflik Awal: ${konflik}
+
+Tulis bab 1 sepanjang ${targetWords} kata dengan narasi menarik, dialog natural, dan deskripsi vivid.`;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices[0].message.content,
+      tokens: resDeduct.tokens,
+      cost: COST,
+    });
+  } catch {
+    res.json({ reply: "❌ Novel create error." });
+  }
+});
+
+/* =========================
+   NOVEL SUITE - CONTINUE
+========================= */
+app.post("/api/novel/continue", authRequired, async (req, res) => {
+  try {
+    const { konteks, arahCerita, panjang = 600 } = req.body;
+
+    const targetWords = parseInt(panjang) || 600;
+    const COST = Math.max(4, Math.ceil(4 + targetWords / 100));
+
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+
+    const prompt = `Lanjutkan cerita berikut dengan ${targetWords} kata:
+
+Konteks sebelumnya:
+${konteks}
+
+Arah cerita selanjutnya: ${arahCerita}
+
+Tulis kelanjutan yang koheren dan menarik.`;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices[0].message.content,
+      tokens: resDeduct.tokens,
+      cost: COST,
+    });
+  } catch {
+    res.json({ reply: "❌ Novel continue error." });
+  }
+});
+
+/* =========================
+   NOVEL SUITE - OUTLINE
+========================= */
+app.post("/api/novel/outline", authRequired, async (req, res) => {
+  try {
+    const { judul, genre, tema, jumlahBab = 10 } = req.body;
+
+    const COST = Math.max(3, Math.ceil(2 + jumlahBab / 5));
+
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+
+    const prompt = `Buat outline novel berbahasa Indonesia:
+Judul: ${judul}
+Genre: ${genre}
+Tema: ${tema}
+Jumlah Bab: ${jumlahBab}
+
+Buat struktur outline dengan:
+- Ringkasan per bab
+- Arc karakter utama
+- Twist dan klimaks
+- Resolusi`;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices[0].message.content,
+      tokens: resDeduct.tokens,
+      cost: COST,
+    });
+  } catch {
+    res.json({ reply: "❌ Outline error." });
+  }
+});
+
+/* =========================
+   NOVEL SUITE - CHARACTER
+========================= */
+app.post("/api/novel/character", authRequired, async (req, res) => {
+  try {
+    const { nama, peran, kepribadian, latar, tujuan } = req.body;
+
+    const COST = 3;
+
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+
+    const prompt = `Kembangkan profil karakter mendalam untuk novel:
+Nama: ${nama}
+Peran: ${peran}
+Kepribadian: ${kepribadian}
+Latar Belakang: ${latar}
+Tujuan: ${tujuan}
+
+Buat profil lengkap dengan:
+- Motivasi internal/eksternal
+- Kekuatan & kelemahan
+- Arc transformasi
+- Hubungan dengan karakter lain
+- Quirks unik`;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices[0].message.content,
+      tokens: resDeduct.tokens,
+      cost: COST,
+    });
+  } catch {
+    res.json({ reply: "❌ Character error." });
+  }
+});
+
+/* =========================
+   NOVEL SUITE - WORLDBUILDING
+========================= */
+app.post("/api/novel/world", authRequired, async (req, res) => {
+  try {
+    const { namaWorld, tipe, elemen, aturan, budaya } = req.body;
+
+    const COST = 4;
+
+    const resDeduct = deductTokens(req.user.id, COST);
+    if (!resDeduct.ok)
+      return res
+        .status(402)
+        .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
+
+    const prompt = `Bangun dunia untuk novel:
+Nama: ${namaWorld}
+Tipe: ${tipe}
+Elemen Unik: ${elemen}
+Aturan/Hukum: ${aturan}
+Budaya: ${budaya}
+
+Buat worldbuilding lengkap dengan:
+- Geografi & iklim
+- Sistem sosial/politik
+- Teknologi/magikal
+- Sejarah penting
+- Konflik inheren
+- Detail sensorik (suara, bau, visual)`;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    res.json({
+      reply: data.choices[0].message.content,
+      tokens: resDeduct.tokens,
+      cost: COST,
+    });
+  } catch {
+    res.json({ reply: "❌ World building error." });
+  }
+});
+
+/* =========================
+   HISTORY (BARU)
+========================= */
+app.get("/api/history", authRequired, (req, res) => {
+  try {
+    const file = path.join(process.cwd(), "data", "memory.json");
+    if (!fs.existsSync(file)) return res.json({ items: [] });
+    const raw = fs.readFileSync(file, "utf-8");
+    const json = JSON.parse(raw || "{}");
+
+    const items = Object.entries(json).map(([id, arr]) => {
+      const messages = Array.isArray(arr) ? arr : [];
+      const firstUser = messages.find((m) => m.role === "user");
+      const title = (firstUser?.content || "Session").slice(0, 40);
+      return { id, title, count: messages.length };
+    });
+    res.json({ items });
+  } catch (e) {
+    res.json({ items: [] });
+  }
+});
+
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+app.listen(PORT, () => {
+  console.log(`✅ KrisAI running at http://localhost:${PORT}`);
+});

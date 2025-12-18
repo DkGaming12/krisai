@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KrisAI — Skenario</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="app">
+
+    <!-- SIDEBAR (SAMA, JANGAN DIUBAH) -->
+    <aside class="sidebar">
+      <div class="logo">KrisAI</div>
+      <nav class="menu">
+        <div class="menu-section-label">Menu Utama</div>
+        <a href="index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="chat.html" class="menu-item">💬 Chat AI</a>
+
+        <div class="menu-section-label">Kreasi</div>
+        <a href="novel/create.html" class="menu-item">✍️ Novel AI</a>
+        <a href="cerpen.html" class="menu-item">📚 Cerpen</a>
+        <a href="scenario.html" class="menu-item active">🎬 Skenario</a>
+
+        <div class="menu-section-label">Tools</div>
+        <a href="rewrite.html" class="menu-item">🔄 Rewrite</a>
+        <a href="editor.html" class="menu-item">🧠 Editor AI</a>
+        <a href="history.html" class="menu-item">🕘 History</a>
+        <a href="topup.html" class="menu-item">💰 Top Up</a>
+        <a href="settings.html" class="menu-item">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="content-card">
+
+        <div class="card-header">
+          <div class="icon">🎬</div>
+          <div>
+            <h1>Buat Skenario</h1>
+            <p>Buat skenario film, drama, atau video dengan bantuan KrisAI.</p>
+          </div>
+        </div>
+
+        <form id="skenarioForm" class="form-grid">
+          <div class="field">
+            <label>Judul Skenario</label>
+            <input id="judul" type="text" placeholder="Judul skenario..." required />
+          </div>
+
+          <div class="field">
+            <label>Genre</label>
+            <select id="genre">
+              <option>Drama</option>
+              <option>Action</option>
+              <option>Romantis</option>
+              <option>Thriller</option>
+              <option>Fantasi</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Garis Besar Cerita</label>
+            <input id="deskripsi" type="text" placeholder="Ceritakan garis besar konflik..." required />
+          </div>
+
+          <div class="card-actions" style="grid-column: 1 / -1;">
+            <button type="submit" class="primary-btn">🎥 Buat Skenario</button>
+          </div>
+        </form>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- POPUP HASIL SKENARIO -->
+  <div id="skenarioModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeSkenarioModal()"></div>
+
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modalJudulSkenario">Hasil Skenario</h2>
+        <button class="close-btn" onclick="closeSkenarioModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <pre id="modalSkenario"></pre>
+      </div>
+
+      <div class="modal-footer">
+        <button class="secondary-btn" onclick="copySkenario()">📋 Salin</button>
+        <button class="secondary-btn" onclick="downloadSkenarioTXT()">📄 TXT</button>
+        <button class="primary-btn" onclick="downloadSkenarioPDF()">📕 PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+
+</html>
+
+
+

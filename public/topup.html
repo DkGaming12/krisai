@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KrisAI — Top Up</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"></script>
+    <style>
+        .topup-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .balance-card h2 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .balance-amount {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .packages-section {
+            margin-bottom: 40px;
+        }
+
+        .packages-section h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .package-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .package-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+        }
+
+        .package-card.selected {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            border-width: 2px;
+        }
+
+        .package-discount {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .package-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #667eea;
+        }
+
+        .package-tokens {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .package-price {
+            font-size: 20px;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .package-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .package-features li {
+            padding: 4px 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .package-features li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .payment-methods {
+            margin-bottom: 40px;
+        }
+
+        .payment-methods h3 {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+        }
+
+        .payment-method {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .payment-method img {
+            height: 30px;
+            margin-bottom: 8px;
+            filter: grayscale(100%) brightness(2);
+            opacity: 0.7;
+        }
+
+        .btn-buy {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-buy:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .transaction-history {
+            margin-top: 40px;
+        }
+
+        .transaction-history h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .transaction-list {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-id {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .transaction-tokens {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .transaction-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .status-success {
+            background: rgba(46, 213, 115, 0.2);
+            color: #2ed573;
+        }
+
+        .status-pending {
+            background: rgba(255, 168, 0, 0.2);
+            color: #ffa800;
+        }
+
+        .status-failed {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        .transaction-date {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .info-box {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h4 {
+            margin: 0 0 8px;
+            color: #667eea;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .packages-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .balance-amount {
+                font-size: 36px;
+            }
+
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">KrisAI</div>
+            <nav class="menu">
+                <div class="menu-section-label">Menu Utama</div>
+                <a href="index.html" class="menu-item">🏠 Dashboard</a>
+                <a href="chat.html" class="menu-item">💬 Chat AI</a>
+
+        <div class="menu-section-label">Kreasi</div>
+                <a href="novel/create.html" class="menu-item">✍️ Novel AI</a>
+                <a href="cerpen.html" class="menu-item">📚 Cerpen</a>
+                <a href="scenario.html" class="menu-item">🎬 Skenario</a>
+
+        <div class="menu-section-label">Tools</div>
+                <a href="rewrite.html" class="menu-item">🔄 Rewrite</a>
+                <a href="editor.html" class="menu-item">🧠 Editor AI</a>
+                <a href="history.html" class="menu-item">🕘 History</a>
+                <a href="topup.html" class="menu-item active">💰 Top Up</a>
+                <a href="settings.html" class="menu-item">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="content-card">
+                <h1>Top Up Token</h1>
+
+                <!-- Balance Card -->
+                <div class="balance-card">
+                    <h2>Saldo Token Anda</h2>
+                    <p class="balance-amount" id="current-balance">-</p>
+                </div>
+
+                <!-- Info Box -->
+                <div class="info-box">
+                    <h4>🎉 Keuntungan Top Up:</h4>
+                    <ul>
+                        <li>Dapatkan diskon hingga 40% untuk paket besar</li>
+                        <li>Token tidak pernah kadaluarsa</li>
+                        <li>Dapat digunakan untuk semua fitur KrisAI</li>
+                        <li>Proses instant setelah pembayaran berhasil</li>
+                    </ul>
+                </div>
+
+                <!-- Packages -->
+                <div class="packages-section">
+                    <h2>Pilih Paket Token</h2>
+                    <div class="packages-grid" id="packages-grid">
+                        <!-- Packages will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Payment Methods Info -->
+                <div class="payment-methods">
+                    <h3>💳 Metode Pembayaran yang Tersedia:</h3>
+                    <div class="payment-grid">
+                        <div class="payment-method">
+                            <div>ShopeePay</div>
+                        </div>
+                        <div class="payment-method">
+                            <div>DANA</div>
+                        </div>
+                        <div class="payment-method">
+                            <div>SeaBank Transfer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buy Button -->
+                <div
+                    style="margin-bottom: 30px; padding: 20px; background: rgba(255,193,7,0.1); border-left: 4px solid #ffc107; border-radius: 8px;">
+                    <p style="margin: 0 0 12px; color: #ffc107; font-weight: bold;">⚠️ Transfer Manual?</p>
+                    <p style="margin: 0 0 12px; font-size: 14px; color: rgba(255,255,255,0.9);">Jika ingin transfer
+                        langsung ke rekening kami, klik tombol di bawah untuk lihat nomor rekening dan cara konfirmasi.
+                    </p>
+                    <a href="topup-payment-guide.html"
+                        style="display: inline-block; background: #ffc107; color: #333; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">📋
+                        Lihat Panduan Transfer Manual</a>
+                </div>
+                <button class="btn-buy" id="btn-buy" disabled>
+                    Pilih Paket untuk Melanjutkan
+                </button>
+
+                <!-- Transaction History -->
+                <div class="transaction-history">
+                    <h2>Riwayat Transaksi</h2>
+                    <div class="transaction-list" id="transaction-list">
+                        <div class="empty-state">Memuat riwayat transaksi...</div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="js/app.js"></script>
+            <script>
+                // Wait for app.js to load and get token from it
+                document.addEventListener("DOMContentLoaded", () => {
+                    // Get token using same method as app.js
+                    const TOKEN_KEY = "KrisAI_TOKEN";
+                    let token = localStorage.getItem(TOKEN_KEY);
+                    let selectedPackage = null;
+                    let packages = [];
+
+                    // Check authentication
+                    if (!token) {
+                        alert("Anda harus login terlebih dahulu!");
+                        window.location.href = "/login.html";
+                        return;
+                    }
+
+                    const API_BASE = window.location.origin;
+
+                    // Fetch current balance
+                    async function fetchBalance() {
+                        try {
+                            const res = await fetch(`${API_BASE}/api/balance`, {
+                                headers: { Authorization: `Bearer ${token}` }
+                            });
+                            const data = await res.json();
+                            if (data.tokens !== undefined) {
+                                document.getElementById("current-balance").textContent =
+                                    data.tokens.toLocaleString("id-ID") + " Token";
+                            }
+                        } catch (err) {
+                            console.error("Error fetching balance:", err);
+                        }
+                    }
+
+                    // Fetch packages
+                    async function fetchPackages() {
+                        try {
+                            const res = await fetch(`${API_BASE}/api/topup/packages`, {
+                                headers: { Authorization: `Bearer ${token}` }
+                            });
+                            const data = await res.json();
+                            packages = data.packages || [];
+                            renderPackages();
+                        } catch (err) {
+                            console.error("Error fetching packages:", err);
+                        }
+                    }
+
+                    // Render packages
+                    function renderPackages() {
+                        const grid = document.getElementById("packages-grid");
+                        grid.innerHTML = packages.map((pkg, index) => `
+                <div class="package-card" data-package-id="${pkg.id}">
+                    ${pkg.discount ? `<div class="package-discount">Hemat ${pkg.discount}</div>` : ''}
+                    <div class="package-label">${pkg.label}</div>
+                    <div class="package-tokens">${pkg.tokens.toLocaleString("id-ID")} Token</div>
+                    <div class="package-price">Rp ${pkg.price.toLocaleString("id-ID")}</div>
+                    <ul class="package-features">
+                        <li>Berlaku selamanya</li>
+                        <li>Untuk semua fitur</li>
+                        ${pkg.discount ? `<li>Diskon ${pkg.discount}</li>` : ''}
+                    </ul>
+                </div>
+            `).join('');
+
+                        // Add click handlers
+                        document.querySelectorAll(".package-card").forEach(card => {
+                            card.addEventListener("click", () => {
+                                document.querySelectorAll(".package-card").forEach(c => c.classList.remove("selected"));
+                                card.classList.add("selected");
+                                selectedPackage = card.dataset.packageId;
+                                updateBuyButton();
+                            });
+                        });
+                    }
+
+                    // Update buy button
+                    function updateBuyButton() {
+                        const btn = document.getElementById("btn-buy");
+                        if (selectedPackage) {
+                            const pkg = packages.find(p => p.id === selectedPackage);
+                            btn.textContent = `Beli ${pkg.tokens} Token - Rp ${pkg.price.toLocaleString("id-ID")}`;
+                            btn.disabled = false;
+                        } else {
+                            btn.textContent = "Pilih Paket untuk Melanjutkan";
+                            btn.disabled = true;
+                        }
+                    }
+
+                    // Buy package
+                    document.getElementById("btn-buy").addEventListener("click", async () => {
+                        if (!selectedPackage) return;
+
+                        const btn = document.getElementById("btn-buy");
+                        btn.disabled = true;
+                        btn.textContent = "Memproses...";
+
+                        try {
+                            const res = await fetch(`${API_BASE}/api/topup/create`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ packageId: selectedPackage })
+                            });
+
+                            const data = await res.json();
+
+                            if (res.ok && data.snapToken) {
+                                // Open Midtrans Snap
+                                snap.pay(data.snapToken, {
+                                    onSuccess: function (result) {
+                                        alert("Pembayaran berhasil! Token akan ditambahkan ke akun Anda.");
+                                        console.log(result);
+                                        fetchBalance();
+                                        fetchTransactionHistory();
+                                        selectedPackage = null;
+                                        document.querySelectorAll(".package-card").forEach(c => c.classList.remove("selected"));
+                                        updateBuyButton();
+                                    },
+                                    onPending: function (result) {
+                                        alert("Menunggu pembayaran. Silakan selesaikan pembayaran Anda.");
+                                        console.log(result);
+                                        fetchTransactionHistory();
+                                    },
+                                    onError: function (result) {
+                                        alert("Pembayaran gagal. Silakan coba lagi.");
+                                        console.log(result);
+                                    },
+                                    onClose: function () {
+                                        console.log("Payment popup closed");
+                                        btn.disabled = false;
+                                        updateBuyButton();
+                                    }
+                                });
+                            } else {
+                                alert(data.error || "Gagal membuat transaksi");
+                                btn.disabled = false;
+                                updateBuyButton();
+                            }
+                        } catch (err) {
+                            console.error("Error creating payment:", err);
+                            alert("Terjadi kesalahan. Silakan coba lagi.");
+                            btn.disabled = false;
+                            updateBuyButton();
+                        }
+                    });
+
+                    // Fetch transaction history
+                    async function fetchTransactionHistory() {
+                        try {
+                            const res = await fetch(`${API_BASE}/api/topup/history`, {
+                                headers: { Authorization: `Bearer ${token}` }
+                            });
+                            const data = await res.json();
+                            renderTransactionHistory(data.transactions || []);
+                        } catch (err) {
+                            console.error("Error fetching transaction history:", err);
+                            document.getElementById("transaction-list").innerHTML =
+                                '<div class="empty-state">Gagal memuat riwayat transaksi</div>';
+                        }
+                    }
+
+                    // Render transaction history
+                    function renderTransactionHistory(transactions) {
+                        const list = document.getElementById("transaction-list");
+
+                        if (transactions.length === 0) {
+                            list.innerHTML = '<div class="empty-state">Belum ada transaksi</div>';
+                            return;
+                        }
+
+                        list.innerHTML = transactions.map(t => {
+                            const statusClass = t.status === 'success' ? 'status-success' :
+                                t.status === 'pending' ? 'status-pending' : 'status-failed';
+                            const statusText = t.status === 'success' ? 'Berhasil' :
+                                t.status === 'pending' ? 'Menunggu' : 'Gagal';
+
+                            const date = new Date(t.createdAt);
+                            const dateStr = date.toLocaleDateString('id-ID', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+
+                            return `
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-id">${t.orderId}</div>
+                            <div class="transaction-tokens">${t.tokens.toLocaleString("id-ID")} Token - Rp ${t.amount.toLocaleString("id-ID")}</div>
+                            <div class="transaction-date">${dateStr}</div>
+                        </div>
+                        <div class="transaction-status ${statusClass}">${statusText}</div>
+                    </div>
+                `;
+                        }).join('');
+                    }
+
+                    // Initialize
+                    fetchBalance();
+                    fetchPackages();
+                    fetchTransactionHistory();
+
+                    // Auto refresh balance every 30 seconds
+                    // Realtime updates - fetch balance setiap 5 detik, transactions setiap 10 detik
+                    setInterval(fetchBalance, 5000);
+                    setInterval(fetchTransactionHistory, 10000);
+                }); // Close DOMContentLoaded
+            </script>
+    </div>
+    </main>
+    </div>
+</body>
+
+</html>
+
+
+

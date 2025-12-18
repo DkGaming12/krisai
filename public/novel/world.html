@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KrisAI — World Building</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="app">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar novel-sidebar">
+      <div class="logo">KrisAI</div>
+
+      <nav class="menu">
+        <div class="menu-section-label">Umum</div>
+        <a href="../index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="../chat.html" class="menu-item">💬 Chat AI</a>
+
+        <div class="menu-divider"></div>
+        <div class="menu-section-label">Novel Suite</div>
+        <a href="create.html" class="menu-item">✍️ Buat Novel</a>
+        <a href="continue.html" class="menu-item">▶️ Lanjutkan Cerita</a>
+        <a href="outline.html" class="menu-item">🧩 Outline & Plot</a>
+        <a href="character.html" class="menu-item">🧍 Karakter</a>
+        <a href="world.html" class="menu-item active">🌍 World Building</a>
+
+        <div class="menu-divider"></div>
+        <div class="menu-section-label">Fitur Lain</div>
+        <a href="../cerpen.html" class="menu-item">📚 Cerpen</a>
+        <a href="../scenario.html" class="menu-item">🎬 Skenario</a>
+        <a href="../rewrite.html" class="menu-item">🔄 Rewrite</a>
+        <a href="../editor.html" class="menu-item">🧠 Editor AI</a>
+        <a href="../history.html" class="menu-item">🗂️ History</a>
+        <a href="../topup.html" class="menu-item">💰 Top Up</a>
+        <a href="../settings.html" class="menu-item">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main novel-main">
+
+      <div class="center-wrapper">
+
+        <section class="novel-hero">
+          <div>
+            <div class="eyebrow">Novel Suite · Dunia</div>
+            <h1>World Building</h1>
+            <p>Definisikan dunia: aturan, sistem, teknologi/sihir, dan sejarah. KrisAI akan menjaga konsistensi setiap
+              kali dunia dipanggil.</p>
+            <div class="hero-actions">
+              <a class="ghost-btn" href="outline.html">🧩 Sinkron ke outline</a>
+              <a class="ghost-btn" href="create.html">✍️ Tulis bab di dunia ini</a>
+            </div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-item">
+              <p class="meta-title">Jenis dunia</p>
+              <div class="meta-value">Realistis · Fantasi · Sci-Fi</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Pilar</p>
+              <div class="meta-value">Sosial · Tech/Sihir</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Hook lore</p>
+              <div class="meta-value">1-2 rahasia</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Larangan</p>
+              <div class="meta-value">Tulis eksplisit</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="novel-grid">
+
+          <section class="glass-card">
+            <div class="section-header">
+              <h3>Detail Dunia</h3>
+              <div class="chips">
+                <span class="chip">Konsisten</span>
+                <span class="chip">Lore bersih</span>
+              </div>
+            </div>
+            <p class="section-subtext">Tulis pilar utama dunia: sosial, teknologi/sihir, sejarah, dan aturan. Hindari
+              info-dump saat bab dimulai.</p>
+
+            <div class="form-grid">
+              <div class="field">
+                <label>Nama Dunia / Tempat</label>
+                <input type="text" placeholder="Nama dunia atau wilayah">
+              </div>
+
+              <div class="field">
+                <label>Jenis Dunia</label>
+                <select>
+                  <option>Realistis</option>
+                  <option>Fantasi</option>
+                  <option>Sci-Fi</option>
+                  <option>Distopia</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Latar Waktu</label>
+                <input type="text" placeholder="Masa depan, abad 18, pasca-apokaliptik">
+              </div>
+
+              <div class="field">
+                <label>Inspirasi Visual</label>
+                <input type="text" placeholder="Referensi estetika: blade runner, ghibli, noir">
+              </div>
+
+              <div class="field full">
+                <label>Sistem Sosial / Politik</label>
+                <textarea rows="3" placeholder="Struktur pemerintahan, kelas sosial, ekonomi"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Teknologi / Sihir</label>
+                <textarea rows="3" placeholder="Teknologi, sihir, atau aturan sistem kekuatan"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Sejarah Singkat Dunia</label>
+                <textarea rows="4" placeholder="Peristiwa penting, perang besar, perjanjian, bencana"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Aturan Khusus Dunia</label>
+                <textarea rows="3" placeholder="Hal yang tidak boleh dilanggar, batas logika dunia"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Rahasia & Konflik Laten</label>
+                <textarea rows="3" placeholder="Apa yang disembunyikan warga, organisasi, atau alam dunia"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="primary-btn">🌍 Simpan Dunia</button>
+            </div>
+          </section>
+
+          <section class="glass-card">
+            <div class="section-header">
+              <h3>Panduan Lore</h3>
+              <span class="chip">Singkat</span>
+            </div>
+            <ul class="bullet-list">
+              <li>Jelaskan 3 pilar: sosial, teknologi/sihir, dan aturan unik.</li>
+              <li>Berikan 1-2 rahasia dunia untuk jadi hook misteri.</li>
+              <li>Tulis contoh adegan yang menunjukkan aturan, bukan sekadar menjelaskan.</li>
+              <li>Batasi istilah khusus; beri padanan sederhana bila perlu.</li>
+            </ul>
+            <div class="mini-stat">
+              <span>Info per bab</span>
+              <strong>1-2 potong</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Istilah khusus</span>
+              <strong>
+                < 5</strong>
+            </div>
+          </section>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="../js/app.js"></script>
+
+</body>
+
+</html>

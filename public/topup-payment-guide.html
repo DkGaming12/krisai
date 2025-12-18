@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panduan Pembayaran Manual - KrisAI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .payment-guide {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .payment-method-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method-card h3 {
+            margin: 0 0 16px;
+            color: #667eea;
+            font-size: 20px;
+        }
+
+        .payment-info {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-family: monospace;
+        }
+
+        .payment-info-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .payment-info-value {
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .confirmation-form {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            border: 1px solid rgba(102, 126, 234, 0.25);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .confirmation-form h3 {
+            margin: 0 0 24px;
+            color: #667eea;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-grid.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 0 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+            grid-column: 1 / -1;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+            grid-column: 1 / -1;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(102, 126, 234, 0.5);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .form-group input::file-selector-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::file-selector-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-alert {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">KrisAI</div>
+            <nav class="menu">
+                <div class="menu-section-label">Menu Utama</div>
+                <a href="index.html" class="menu-item">🏠 Dashboard</a>
+                <a href="chat.html" class="menu-item">💬 Chat AI</a>
+
+                <div class="menu-section-label">Kreasi</div>
+                <a href="novel/create.html" class="menu-item">✍️ Novel AI</a>
+                <a href="cerpen.html" class="menu-item">📚 Cerpen</a>
+                <a href="scenario.html" class="menu-item">🎬 Skenario</a>
+
+                <div class="menu-section-label">Tools</div>
+                <a href="rewrite.html" class="menu-item">🔄 Rewrite</a>
+                <a href="editor.html" class="menu-item">🧠 Editor AI</a>
+                <a href="history.html" class="menu-item">🕘 History</a>
+                <a href="topup.html" class="menu-item active">💰 Top Up</a>
+                <a href="settings.html" class="menu-item">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="content-card">
+                <div class="payment-guide">
+                    <h1>Panduan Pembayaran Manual</h1>
+                    <p>Jika Anda memilih untuk transfer manual, ikuti panduan di bawah ini dan kirim bukti transfer ke
+                        WhatsApp owner.</p>
+
+                    <div class="info-alert">
+                        ⚠️ Pastikan Anda mentransfer dengan nominal yang benar. Jangan lupa konfirmasi dengan bukti ke
+                        WhatsApp owner setelah transfer.
+                    </div>
+
+                    <!-- ShopeePay -->
+                    <div class="payment-method-card">
+                        <h3>💳 ShopeePay</h3>
+                        <div class="payment-info">
+                            <div class="payment-info-label">Nomor ShopeePay (Spay):</div>
+                            <div class="payment-info-value">085171623105</div>
+                            <button class="copy-btn" onclick="copyToClipboard('085171623105')">📋 Copy</button>
+                        </div>
+                        <p style="font-size: 13px; color: rgba(255,255,255,0.7); margin: 8px 0;">
+                            Buka aplikasi ShopeePay → Transfer ke nomor di atas dengan nominal sesuai paket yang
+                            dipilih.
+                        </p>
+                    </div>
+
+                    <!-- DANA -->
+                    <div class="payment-method-card">
+                        <h3>💰 DANA</h3>
+                        <div class="payment-info">
+                            <div class="payment-info-label">Nomor DANA:</div>
+                            <div class="payment-info-value">085171623105</div>
+                            <button class="copy-btn" onclick="copyToClipboard('085171623105')">📋 Copy</button>
+                        </div>
+                        <p style="font-size: 13px; color: rgba(255,255,255,0.7); margin: 8px 0;">
+                            Buka aplikasi DANA → Transfer ke nomor di atas dengan nominal sesuai paket yang dipilih.
+                        </p>
+                    </div>
+
+                    <!-- SeaBank -->
+                    <div class="payment-method-card">
+                        <h3>🏦 SeaBank Transfer</h3>
+                        <div class="payment-info">
+                            <div class="payment-info-label">Nomor Rekening SeaBank:</div>
+                            <div class="payment-info-value">901029537414</div>
+                            <button class="copy-btn" onclick="copyToClipboard('901029537414')">📋 Copy</button>
+                        </div>
+                        <p style="font-size: 13px; color: rgba(255,255,255,0.7); margin: 8px 0;">
+                            Gunakan ATM atau mobile banking Anda untuk transfer ke rekening SeaBank di atas dengan
+                            nominal sesuai paket.
+                        </p>
+                    </div>
+
+                    <!-- Confirmation Form -->
+                    <div class="confirmation-form">
+                        <h3>📸 Konfirmasi Pembayaran</h3>
+                        <form id="confirmationForm" style="display: grid; gap: 16px;">
+                            <div class="form-group">
+                                <label>Nominal Transfer (Rp)</label>
+                                <input type="number" id="amount" placeholder="Contoh: 10000" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Metode Pembayaran</label>
+                                <select id="paymentMethod" required>
+                                    <option value="">-- Pilih Metode --</option>
+                                    <option value="shopeepay">ShopeePay (085171623105)</option>
+                                    <option value="dana">DANA (085171623105)</option>
+                                    <option value="seabank">SeaBank (901029537414)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>📱 Upload Screenshot Bukti Transfer</label>
+                                <input type="file" id="proofFile" accept="image/*" required>
+                                <p style="font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 6px;">Format: JPG,
+                                    PNG, GIF (Max 5MB)</p>
+                            </div>
+
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Catatan Tambahan</label>
+                                <textarea id="notes" placeholder="Opsional: Informasi tambahan jika ada"></textarea>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Kirim Bukti ke WhatsApp Owner</button>
+                        </form>
+                    </div>
+
+                    <p style="margin-top: 30px; font-size: 12px; color: rgba(255,255,255,0.5); text-align: center;">
+                        WhatsApp Owner: 085700660475<br>
+                        Pastikan bukti transfer jelas dan nominal sesuai
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            alert('Copied: ' + text);
+        }
+
+        document.getElementById('confirmationForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const amount = document.getElementById('amount').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const proofFile = document.getElementById('proofFile').files[0];
+            const notes = document.getElementById('notes').value;
+
+            // Validate file
+            if (!proofFile) {
+                alert('Pilih file bukti transfer terlebih dahulu');
+                return;
+            }
+
+            if (proofFile.size > 5 * 1024 * 1024) {
+                alert('Ukuran file terlalu besar (maksimal 5MB)');
+                return;
+            }
+
+            // Map method names
+            const methodNames = {
+                'shopeepay': 'ShopeePay',
+                'dana': 'DANA',
+                'seabank': 'SeaBank'
+            };
+
+            const methodLabel = methodNames[paymentMethod] || paymentMethod;
+
+            // Create WhatsApp message
+            const message = `*Konfirmasi Pembayaran KrisAI* 💰\n\n` +
+                `📊 *Detail Pembayaran:*\n` +
+                `• Nominal: Rp ${parseInt(amount).toLocaleString('id-ID')}\n` +
+                `• Metode: ${methodLabel}\n` +
+                `• File: ${proofFile.name}\n` +
+                (notes ? `• Catatan: ${notes}\n` : '') +
+                `\n_Pesan otomatis dari sistem KrisAI_`;
+
+            // Redirect to WhatsApp dengan pesan
+            const whatsappUrl = `https://wa.me/6285700660475?text=${encodeURIComponent(message)}`;
+
+            // Open WhatsApp
+            alert('Bukti transfer diterima! Silakan dokumentasikan di WhatsApp Owner.\n\nFile: ' + proofFile.name);
+            window.open(whatsappUrl, '_blank');
+
+            // Reset form
+            e.target.reset();
+        });
+    </script>
+</body>
+
+</html>

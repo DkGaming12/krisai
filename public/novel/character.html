@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KrisAI — Karakter</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="app">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar novel-sidebar">
+      <div class="logo">KrisAI</div>
+
+      <nav class="menu">
+        <div class="menu-section-label">Umum</div>
+        <a href="../index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="../chat.html" class="menu-item">💬 Chat AI</a>
+
+        <div class="menu-divider"></div>
+        <div class="menu-section-label">Novel Suite</div>
+        <a href="create.html" class="menu-item">✍️ Buat Novel</a>
+        <a href="continue.html" class="menu-item">▶️ Lanjutkan Cerita</a>
+        <a href="outline.html" class="menu-item">🧩 Outline & Plot</a>
+        <a href="character.html" class="menu-item active">🧍 Karakter</a>
+        <a href="world.html" class="menu-item">🌍 World Building</a>
+
+        <div class="menu-divider"></div>
+        <div class="menu-section-label">Fitur Lain</div>
+        <a href="../cerpen.html" class="menu-item">📚 Cerpen</a>
+        <a href="../scenario.html" class="menu-item">🎬 Skenario</a>
+        <a href="../rewrite.html" class="menu-item">🔄 Rewrite</a>
+        <a href="../editor.html" class="menu-item">🧠 Editor AI</a>
+        <a href="../history.html" class="menu-item">🗂️ History</a>
+        <a href="../topup.html" class="menu-item">💰 Top Up</a>
+        <a href="../settings.html" class="menu-item">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main novel-main">
+
+      <div class="center-wrapper">
+
+        <section class="novel-hero">
+          <div>
+            <div class="eyebrow">Novel Suite · Karakter</div>
+            <h1>Character Builder</h1>
+            <p>Bikin karakter hidup: tujuan, ketakutan, relasi, dan arc. KrisAI menjaga konsistensi sifat di setiap bab.
+            </p>
+            <div class="hero-actions">
+              <a class="ghost-btn" href="world.html">🌍 Hubungkan dunia</a>
+              <a class="ghost-btn" href="continue.html">▶️ Pakai di bab baru</a>
+            </div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-item">
+              <p class="meta-title">Arketipe</p>
+              <div class="meta-value">Hero / Antihero</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Elemen wajib</p>
+              <div class="meta-value">Goal · flaw · want</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Relasi</p>
+              <div class="meta-value">Max 4 kunci</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Arc</p>
+              <div class="meta-value">Up / Down / Flat</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="novel-grid">
+
+          <section class="glass-card">
+            <div class="section-header">
+              <h3>Detail Karakter</h3>
+              <div class="chips">
+                <span class="chip">Konsisten</span>
+                <span class="chip">Relasi jelas</span>
+              </div>
+            </div>
+            <p class="section-subtext">Isi elemen dasar lalu dalami motivasi, luka lama, dan hubungan inti agar karakter
+              terasa hidup.</p>
+
+            <div class="form-grid">
+              <div class="field">
+                <label>Nama Karakter</label>
+                <input type="text" placeholder="Nama karakter">
+              </div>
+
+              <div class="field">
+                <label>Peran dalam Cerita</label>
+                <select>
+                  <option>Tokoh Utama</option>
+                  <option>Tokoh Pendukung</option>
+                  <option>Antagonis</option>
+                  <option>Deuteragonis</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Usia</label>
+                <input type="number" placeholder="Usia karakter">
+              </div>
+
+              <div class="field">
+                <label>Arketipe</label>
+                <select>
+                  <option>Hero</option>
+                  <option>Antihero</option>
+                  <option>Mentor</option>
+                  <option>Trickster</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label>Kepribadian & Sifat Khas</label>
+                <textarea rows="3" placeholder="Sifat, kebiasaan, cara berpikir, mannerism"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Latar & Luka Lama</label>
+                <textarea rows="3" placeholder="Asal, trauma kecil/besar, hal yang membentuknya"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Tujuan Hidup (Goal)</label>
+                <textarea rows="3" placeholder="Apa yang ingin dicapai karakter"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Ketakutan / Kelemahan</label>
+                <textarea rows="3" placeholder="Hal yang paling ditakuti atau kelemahan utama"></textarea>
+              </div>
+
+              <div class="field">
+                <label>Arc Karakter</label>
+                <select>
+                  <option>Perubahan positif</option>
+                  <option>Kejatuhan</option>
+                  <option>Tragis</option>
+                  <option>Tetap (flat arc)</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Hubungan Kunci</label>
+                <input type="text" placeholder="Mentor, rival, pasangan, sahabat">
+              </div>
+
+              <div class="field full">
+                <label>Catatan Visual / Dialog</label>
+                <textarea rows="3" placeholder="Ciri visual, cara bicara, catchphrase, aksen"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="primary-btn">🧍 Simpan Karakter</button>
+            </div>
+          </section>
+
+          <section class="glass-card">
+            <div class="section-header">
+              <h3>Checklist Karakter</h3>
+              <span class="chip">Cepat</span>
+            </div>
+            <ul class="bullet-list">
+              <li>Goal jelas, fear jelas, satu flaw yang memicu konflik.</li>
+              <li>Hubungan minimal dengan 2 karakter lain (ally & foil).</li>
+              <li>Beri kebiasaan kecil unik untuk memudahkan recall.</li>
+              <li>Catat limit moral: apa yang tidak akan ia lakukan.</li>
+            </ul>
+            <div class="mini-stat">
+              <span>Arc rekomendasi</span>
+              <strong>Up / Flat</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Relasi aktif</span>
+              <strong>3-4</strong>
+            </div>
+          </section>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="../js/app.js"></script>
+
+</body>
+
+</html>

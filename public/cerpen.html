@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KrisAI — Cerpen</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">KrisAI</div>
+      <nav class="menu">
+        <div class="menu-section-label">Menu Utama</div>
+        <a href="index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="chat.html" class="menu-item">💬 Chat AI</a>
+
+        <div class="menu-section-label">Kreasi</div>
+        <a href="novel/create.html" class="menu-item">✍️ Novel AI</a>
+        <a href="cerpen.html" class="menu-item active">📚 Cerpen</a>
+        <a href="scenario.html" class="menu-item">🎬 Skenario</a>
+
+        <div class="menu-section-label">Tools</div>
+        <a href="rewrite.html" class="menu-item">🔄 Rewrite</a>
+        <a href="editor.html" class="menu-item">🧠 Editor AI</a>
+        <a href="history.html" class="menu-item">🕘 History</a>
+        <a href="topup.html" class="menu-item">💰 Top Up</a>
+        <a href="settings.html" class="menu-item">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="content-card">
+
+        <div class="card-header">
+          <div class="icon">📖</div>
+          <div>
+            <h1>Buat Cerpen</h1>
+            <p>Buat cerita pendek otomatis dengan KrisAI.</p>
+          </div>
+        </div>
+
+        <form id="cerpenForm" class="form-grid">
+          <div class="field">
+            <label>Judul</label>
+            <input type="text" id="judul" required />
+          </div>
+
+          <div class="field">
+            <label>Tema</label>
+            <input type="text" id="tema" placeholder="Cinta, kehilangan, misteri" required />
+          </div>
+
+          <div class="field">
+            <label>Genre</label>
+            <select id="genre">
+              <option>Drama</option>
+              <option>Romantis</option>
+              <option>Horor</option>
+              <option>Fantasi</option>
+              <option>Slice of Life</option>
+            </select>
+          </div>
+        </form>
+
+        <div class="card-actions">
+          <button type="submit" class="primary-btn" form="cerpenForm">✨ Buat Cerpen</button>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+  <!-- POPUP HASIL CERPEN -->
+  <div id="cerpenModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeCerpenModal()"></div>
+
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modalJudul">Hasil Cerpen</h2>
+        <button class="close-btn" onclick="closeCerpenModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <pre id="modalCerpen"></pre>
+      </div>
+
+      <div class="modal-footer">
+        <button class="secondary-btn" onclick="copyCerpen()">📋 Salin</button>
+        <button class="secondary-btn" onclick="downloadTXT()">📄 TXT</button>
+        <button class="primary-btn" onclick="downloadPDF()">📕 PDF</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="js/app.js"></script>
+</body>
+
+</html>
+
+
+

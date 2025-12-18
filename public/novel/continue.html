@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KrisAI — Lanjutkan Cerita</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="app">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar novel-sidebar">
+      <div class="logo">KrisAI</div>
+
+      <nav class="menu">
+        <div class="menu-section-label">Umum</div>
+        <a href="../index.html" class="menu-item">🏠 Dashboard</a>
+        <a href="../chat.html" class="menu-item">💬 Chat AI</a>
+
+        <div class="menu-divider"></div>
+        <div class="menu-section-label">Novel Suite</div>
+        <a href="create.html" class="menu-item">✍️ Buat Novel</a>
+        <a href="continue.html" class="menu-item active">▶️ Lanjutkan Cerita</a>
+        <a href="outline.html" class="menu-item">🧩 Outline & Plot</a>
+        <a href="character.html" class="menu-item">🧍 Karakter</a>
+        <a href="world.html" class="menu-item">🌍 World Building</a>
+
+        <div class="menu-divider"></div>
+        <div class="menu-section-label">Fitur Lain</div>
+        <a href="../cerpen.html" class="menu-item">📚 Cerpen</a>
+        <a href="../scenario.html" class="menu-item">🎬 Skenario</a>
+        <a href="../rewrite.html" class="menu-item">🔄 Rewrite</a>
+        <a href="../editor.html" class="menu-item">🧠 Editor AI</a>
+        <a href="../history.html" class="menu-item">🗂️ History</a>
+        <a href="../topup.html" class="menu-item">💰 Top Up</a>
+        <a href="../settings.html" class="menu-item">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main novel-main">
+
+      <div class="center-wrapper">
+
+        <section class="novel-hero">
+          <div>
+            <div class="eyebrow">Novel Suite · Bab lanjutan</div>
+            <h1>Lanjutkan Cerita</h1>
+            <p>Masukkan ringkasan bab sebelumnya dan arah baru. KrisAI menjaga kontinuitas karakter, dunia, dan tone
+              agar transisi halus.</p>
+            <div class="hero-actions">
+              <a class="ghost-btn" href="create.html">✍️ Bab pembuka</a>
+              <a class="ghost-btn" href="outline.html">🧩 Lihat outline</a>
+            </div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-item">
+              <p class="meta-title">Kontinuitas</p>
+              <div class="meta-value">Karakter + world</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Anjuran panjang</p>
+              <div class="meta-value">800–1500 kata</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Mood default</p>
+              <div class="meta-value">Ikuti bab lalu</div>
+            </div>
+            <div class="meta-item">
+              <p class="meta-title">Dialog seimbang</p>
+              <div class="meta-value">40% : 60%</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="novel-grid">
+
+          <section class="glass-card">
+            <div class="section-header">
+              <h3>Data Bab Sebelumnya</h3>
+              <div class="chips">
+                <span class="chip">Kontinuitas</span>
+                <span class="chip">Pacing aman</span>
+              </div>
+            </div>
+            <p class="section-subtext">Berikan ringkasan padat supaya AI tahu apa yang harus dibawa, dihindari, dan
+              dikembangkan.</p>
+
+            <div class="form-grid">
+              <div class="field">
+                <label>Pilih Proyek Cerita</label>
+                <select>
+                  <option>— Pilih cerita —</option>
+                  <option>Orbit Terakhir</option>
+                  <option>Senja di Kota Hujan</option>
+                  <option>Memoar Tengah Malam</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Panjang Lanjutan</label>
+                <select>
+                  <option>800–1000 kata</option>
+                  <option>1200–1500 kata</option>
+                  <option>2000+ kata</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Arah Cerita</label>
+                <select>
+                  <option>Lanjutkan alur normal</option>
+                  <option>Tambahkan konflik</option>
+                  <option>Buat plot twist</option>
+                  <option>Perdalam emosi karakter</option>
+                  <option>Reveal rahasia</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Fokus Emosi</label>
+                <select>
+                  <option>Harapan</option>
+                  <option>Ketegangan</option>
+                  <option>Melankolis</option>
+                  <option>Optimistis</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label>Ringkasan Bab Sebelumnya</label>
+                <textarea rows="4"
+                  placeholder="Highlight konflik, keputusan karakter, dan cliffhanger yang terjadi"></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Catatan & Batasan</label>
+                <textarea rows="3"
+                  placeholder="Hal yang harus dipertahankan, karakter yang tidak boleh dilupakan, kata tabu, rating, dsb"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="primary-btn">▶️ Lanjutkan Cerita</button>
+            </div>
+          </section>
+
+          <section class="glass-card">
+            <div class="section-header">
+              <h3>Tips Kontinuitas</h3>
+              <span class="chip">Ringkas</span>
+            </div>
+            <ul class="bullet-list">
+              <li>Tulis ringkasan 5-7 kalimat, fokus ke konflik, keputusan, dan posisi terakhir tokoh.</li>
+              <li>Sebut POV yang dipakai agar konsisten.</li>
+              <li>Nyatakan batasan: jangan tambah karakter baru? jangan loncat waktu?</li>
+              <li>Jika ada twist, beri clue singkat supaya build-up terasa natural.</li>
+            </ul>
+            <div class="mini-stat">
+              <span>Pacing ideal</span>
+              <strong>4 segmen</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Hook akhir</span>
+              <strong>1 kalimat</strong>
+            </div>
+          </section>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="../js/app.js"></script>
+
+</body>
+
+</html>

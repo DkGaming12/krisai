@@ -1,0 +1,26 @@
+{
+  "name": "krisai",
+  "version": "1.0.0",
+  "description": "KrisAI - AI-powered Creative Writing Platform",
+  "type": "module",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.x"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "groq-sdk": "^0.37.0",
+    "jsonwebtoken": "^9.0.2",
+    "midtrans-client": "^1.4.3",
+    "node-fetch": "^3.3.2",
+    "openai": "^6.14.0",
+    "uuid": "^11.0.3"
+  }
+}
