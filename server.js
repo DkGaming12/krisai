@@ -940,14 +940,31 @@ Buat struktur outline dengan:
       }
     );
 
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("GROQ outline error", errText);
+      return res
+        .status(500)
+        .json({ error: "Gagal membuat outline (GROQ)." });
+    }
+
     const data = await response.json();
+    const reply = data?.choices?.[0]?.message?.content;
+    if (!reply) {
+      console.error("GROQ outline empty response", data);
+      return res
+        .status(500)
+        .json({ error: "Gagal membuat outline (balasan kosong)." });
+    }
+
     res.json({
-      reply: data.choices[0].message.content,
+      reply,
       tokens: resDeduct.tokens,
       cost: COST,
     });
-  } catch {
-    res.json({ reply: "❌ Outline error." });
+  } catch (e) {
+    console.error("Outline error", e);
+    res.status(500).json({ reply: "❌ Outline error." });
   }
 });
 
