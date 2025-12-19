@@ -14,6 +14,13 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
+// Ensure data directory exists
+const dataDir = path.join(process.cwd(), "data");
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+  console.log("✅ Created data directory");
+}
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-please-change";
 const DEFAULT_TOKENS = Number(process.env.DEFAULT_TOKENS || 100);
@@ -70,7 +77,7 @@ function readUsers() {
     if (usersCache !== null) {
       return usersCache;
     }
-    
+
     if (!fs.existsSync(USERS_FILE)) {
       usersCache = [];
       return [];
@@ -87,13 +94,13 @@ function readUsers() {
 function writeUsers(arr) {
   try {
     usersCache = arr; // Update memory cache immediately
-    
+
     // Ensure data directory exists
     const dataDir = path.dirname(USERS_FILE);
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
-    
+
     fs.writeFileSync(USERS_FILE, JSON.stringify(arr, null, 2), "utf-8");
     console.log(`✅ Users saved (${arr.length} users)`);
   } catch (e) {
@@ -109,7 +116,7 @@ function readTransactions() {
     if (transactionsCache !== null) {
       return transactionsCache;
     }
-    
+
     if (!fs.existsSync(TRANSACTIONS_FILE)) {
       transactionsCache = [];
       return [];
@@ -126,13 +133,13 @@ function readTransactions() {
 function writeTransactions(arr) {
   try {
     transactionsCache = arr; // Update memory cache immediately
-    
+
     // Ensure data directory exists
     const dataDir = path.dirname(TRANSACTIONS_FILE);
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
-    
+
     fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(arr, null, 2), "utf-8");
     console.log(`✅ Transactions saved (${arr.length} transactions)`);
   } catch (e) {
