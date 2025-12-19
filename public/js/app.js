@@ -441,10 +441,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const data = await res.json();
-        alert(data.error || data.reply || "Novel generated!");
+        if (data.error) throw new Error(data.error);
+        openResultModal(judul || "Hasil Novel", data.reply || "(kosong)");
       } catch (err) {
         console.error("Create request error:", err);
-        alert("Gagal membuat novel. Coba lagi.");
+        openResultModal("Gagal", "Gagal membuat novel. Coba lagi.");
       } finally {
         setBtnLoading(submitBtn, false);
       }
@@ -470,10 +471,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const data = await res.json();
-        alert(data.error || data.reply || "Continue generated!");
+        if (data.error) throw new Error(data.error);
+        openResultModal("Lanjutan Cerita", data.reply || "(kosong)");
       } catch (err) {
         console.error("Continue request error:", err);
-        alert("Gagal melanjutkan cerita. Coba lagi.");
+        openResultModal("Gagal", "Gagal melanjutkan cerita. Coba lagi.");
       } finally {
         setBtnLoading(submitBtn, false);
       }
@@ -536,9 +538,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const data = await res.json();
-        alert(data.reply || "Character generated!");
+        if (data.error) throw new Error(data.error);
+        openResultModal(`Karakter: ${nama || "Profil"}`, data.reply || "(kosong)");
       } catch (err) {
-        alert("Gagal membuat karakter. Coba lagi.");
+        openResultModal("Gagal", "Gagal membuat karakter. Coba lagi.");
       } finally {
         setBtnLoading(submitBtn, false);
       }
@@ -566,9 +569,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const data = await res.json();
-        alert(data.reply || "World building generated!");
+        if (data.error) throw new Error(data.error);
+        openResultModal(`World: ${nama || "Worldbuilding"}`, data.reply || "(kosong)");
       } catch (err) {
-        alert("Gagal membuat world building. Coba lagi.");
+        openResultModal("Gagal", "Gagal membuat world building. Coba lagi.");
       } finally {
         setBtnLoading(submitBtn, false);
       }
@@ -733,4 +737,87 @@ function downloadOutlinePDF() {
 
 function sanitizeFilename(name) {
   return name.replace(/[^a-z0-9\-_. ]/gi, "_").trim() || "file";
+}
+
+/* =========================
+   MODAL HASIL GENERIK (untuk Novel Create/Continue/Character/World)
+========================= */
+function ensureResultModal() {
+  let modal = document.getElementById("resultModal");
+  if (modal) return modal;
+
+  modal = document.createElement("div");
+  modal.id = "resultModal";
+  modal.className = "modal hidden";
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="closeResultModal()"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="resultModalTitle">Hasil</h2>
+        <button class="close-btn" onclick="closeResultModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <pre id="resultModalBody"></pre>
+      </div>
+      <div class="modal-footer">
+        <button class="secondary-btn" id="resultCopyBtn">📋 Salin</button>
+        <button class="secondary-btn" id="resultTxtBtn">📄 TXT</button>
+        <button class="primary-btn" id="resultPdfBtn">📕 PDF</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+
+  // Attach actions
+  document.getElementById("resultCopyBtn").onclick = copyResult;
+  document.getElementById("resultTxtBtn").onclick = downloadResultTXT;
+  document.getElementById("resultPdfBtn").onclick = downloadResultPDF;
+  return modal;
+}
+
+function openResultModal(title, text) {
+  const modal = ensureResultModal();
+  const t = document.getElementById("resultModalTitle");
+  const b = document.getElementById("resultModalBody");
+  if (t) t.innerText = title || "Hasil";
+  if (b) b.innerText = text || "";
+  modal.classList.remove("hidden");
+}
+
+function closeResultModal() {
+  const modal = document.getElementById("resultModal");
+  if (modal) modal.classList.add("hidden");
+}
+
+function copyResult() {
+  const text = document.getElementById("resultModalBody")?.innerText || "";
+  navigator.clipboard.writeText(text);
+}
+
+function downloadResultTXT() {
+  const title = document.getElementById("resultModalTitle")?.innerText || "Hasil";
+  const text = document.getElementById("resultModalBody")?.innerText || "";
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${sanitizeFilename(title)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function downloadResultPDF() {
+  const title = document.getElementById("resultModalTitle")?.innerText || "Hasil";
+  const text = document.getElementById("resultModalBody")?.innerText || "";
+  const blob = new Blob([text], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${sanitizeFilename(title)}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
