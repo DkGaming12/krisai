@@ -84,17 +84,17 @@
                 fitur lainnya!</p>
             <button id="bonusBtn"
                 style="background: white; color: #667eea; border: none; padding: 12px 32px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s;">
-                Mulai Sekarang
+                Masuk Sekarang
             </button>
         </div>
     </div>
 
     <script src="js/app.js"></script>
     <script>
-        // Handle bonus modal close
+        // Handle bonus modal close -> redirect ke login
         document.getElementById('bonusBtn')?.addEventListener('click', () => {
             document.getElementById('bonusModal').style.display = 'none';
-            window.location.href = '/index.html';
+            window.location.href = '/login.html';
         });
     </script>
 </body>

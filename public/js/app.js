@@ -244,18 +244,27 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const data = await res.json();
         if (data.token) {
-          setToken(data.token);
-          // Show bonus modal if bonusTokens in response
+          // Jangan auto-login saat register; tampilkan popup sukses + bonus
           if (data.bonusTokens) {
             const modal = document.getElementById("bonusModal");
             if (modal) {
               modal.style.display = "flex";
+              const btn = document.getElementById("bonusBtn");
+              if (btn) {
+                btn.textContent = "Masuk Sekarang";
+                btn.onclick = () => {
+                  document.getElementById("bonusModal").style.display = "none";
+                  window.location.href = "/login.html";
+                };
+              }
             } else {
               // Fallback jika modal belum load
-              setTimeout(() => (window.location.href = "/index.html"), 500);
+              alert("Pendaftaran berhasil! Bonus 500 token. Silakan login.");
+              window.location.href = "/login.html";
             }
           } else {
-            window.location.href = "/index.html";
+            alert("Pendaftaran berhasil! Silakan login.");
+            window.location.href = "/login.html";
           }
         } else {
           alert(data.error || "Register gagal");
