@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import midtransClient from "midtrans-client";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ if (!fs.existsSync(dataDir)) {
 }
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-please-change";
 const DEFAULT_TOKENS = Number(process.env.DEFAULT_TOKENS || 100);
 const USERS_FILE = path.join(process.cwd(), "data", "users.json");
@@ -70,6 +72,82 @@ const TOKEN_PACKAGES = [
 // In-memory cache for production stability (Railway ephemeral storage)
 let usersCache = null;
 let transactionsCache = null;
+
+// ============= AI Helper (Groq -> Gemini fallback) =============
+async function aiComplete({ prompt, messages, system }) {
+  // Try GROQ first when available
+  if (GROQ_API_KEY) {
+    try {
+      const payload = messages
+        ? {
+            model: "llama-3.1-8b-instant",
+            messages: [
+              ...(system ? [{ role: "system", content: system }] : []),
+              ...messages,
+            ],
+          }
+        : {
+            model: "llama-3.1-8b-instant",
+            messages: [
+              {
+                role: "user",
+                content: system ? `${system}\n\n${prompt || ""}` : prompt || "",
+              },
+            ],
+          };
+
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const txt = await res.text();
+        const err = new Error(`GROQ error: ${res.status}`);
+        err.code = res.status;
+        err.details = txt;
+        throw err;
+      }
+      const data = await res.json();
+      const out = data?.choices?.[0]?.message?.content;
+      if (out) return out;
+      const err = new Error("GROQ empty response");
+      err.code = "GROQ_EMPTY";
+      throw err;
+    } catch (e) {
+      // Fall through to Gemini when rate-limited or any failure
+      if (!GEMINI_API_KEY) throw e;
+    }
+  }
+
+  // Gemini fallback
+  if (GEMINI_API_KEY) {
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL || "gemini-1.5-flash",
+    });
+
+    // Compose content
+    const composed =
+      (system ? `System instruction:\n${system}\n\n` : "") +
+      (messages
+        ? messages
+            .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`)
+            .join("\n\n")
+        : prompt || "");
+
+    const resp = await model.generateContent(composed);
+    const text = resp?.response?.text?.();
+    if (text) return text;
+    throw new Error("Gemini empty response");
+  }
+
+  throw new Error("No AI provider configured. Set GROQ_API_KEY or GEMINI_API_KEY.");
+}
 
 function readUsers() {
   try {
@@ -580,11 +658,11 @@ app.get("/api/topup/status/:orderId", authRequired, async (req, res) => {
 ========================= */
 app.post("/api/chat", authRequired, async (req, res) => {
   try {
-    // If GROQ key is missing or placeholder, inform client without charging tokens
-    if (!GROQ_API_KEY || GROQ_API_KEY === "REPLACE_ME") {
+    // If no provider configured at all, inform client without charging tokens
+    if (((!GROQ_API_KEY || GROQ_API_KEY === "REPLACE_ME") && !GEMINI_API_KEY)) {
       return res.json({
         reply:
-          "⚠️ Chat AI belum aktif. Admin perlu mengisi GROQ_API_KEY di Railway Variables dulu.",
+          "⚠️ Chat AI belum aktif. Admin perlu mengisi kunci AI (GROQ_API_KEY atau GEMINI_API_KEY) di Railway Variables dulu.",
       });
     }
     const COST = 1;
@@ -596,29 +674,14 @@ app.post("/api/chat", authRequired, async (req, res) => {
     const { message } = req.body;
     if (!message) return res.json({ reply: "Pesan kosong." });
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: message },
-          ],
-        }),
-      }
-    );
-
-    const data = await response.json();
-    res.json({
-      reply: data.choices[0].message.content,
-      tokens: resDeduct.tokens,
+    const reply = await aiComplete({
+      messages: [
+        { role: "user", content: message },
+      ],
+      system: SYSTEM_PROMPT,
     });
+
+    res.json({ reply, tokens: resDeduct.tokens });
   } catch (err) {
     res.json({ reply: "❌ Chat error." });
   }
@@ -649,26 +712,8 @@ Genre: ${genre}
 Panjang ${targetWords} kata.
 `;
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-        }),
-      }
-    );
-
-    const data = await response.json();
-    res.json({
-      reply: data.choices[0].message.content,
-      tokens: resDeduct.tokens,
-    });
+    const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+    res.json({ reply, tokens: resDeduct.tokens });
   } catch {
     res.json({ reply: "❌ Cerpen error." });
   }
@@ -705,26 +750,8 @@ AKSI
 DIALOG
 `;
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-        }),
-      }
-    );
-
-    const data = await response.json();
-    res.json({
-      reply: data.choices[0].message.content,
-      tokens: resDeduct.tokens,
-    });
+    const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+    res.json({ reply, tokens: resDeduct.tokens });
   } catch {
     res.json({ reply: "❌ Skenario error." });
   }
@@ -756,26 +783,8 @@ app.post("/api/rewrite", authRequired, async (req, res) => {
 Berikan evaluasi ringkas, poin perbaikan, dan contoh perbaikan untuk teks berikut:
 \n\n${teks}`;
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-        }),
-      }
-    );
-
-    const data = await response.json();
-    res.json({
-      reply: data.choices?.[0]?.message?.content || "(kosong)",
-      tokens: resDeduct.tokens,
-    });
+    const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+    res.json({ reply: reply || "(kosong)", tokens: resDeduct.tokens });
   } catch (e) {
     res.json({ reply: "❌ Rewrite error." });
   }
@@ -818,27 +827,8 @@ Konflik Awal: ${konflik || "(tidak diisi)"}
 
 Tulis bab 1 sepanjang ${targetWords} kata dengan narasi menarik, dialog natural, dan deskripsi vivid.`;
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-        }),
-      }
-    );
-
-    const data = await response.json();
-    res.json({
-      reply: data.choices[0].message.content,
-      tokens: resDeduct.tokens,
-      cost: COST,
-    });
+    const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+    res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch (e) {
     console.error("Novel create error", e.message || e);
     res
@@ -875,27 +865,8 @@ Arah cerita selanjutnya: ${arah}
 
 Tulis kelanjutan yang koheren dan menarik.`;
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-        }),
-      }
-    );
-
-    const data = await response.json();
-    res.json({
-      reply: data.choices[0].message.content,
-      tokens: resDeduct.tokens,
-      cost: COST,
-    });
+    const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+    res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch (e) {
     console.error("Novel continue error", e.message || e);
     res
@@ -931,41 +902,8 @@ Buat struktur outline dengan:
 - Twist dan klimaks
 - Resolusi`;
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error("GROQ outline error", errText);
-      return res.status(500).json({ error: "Gagal membuat outline (GROQ)." });
-    }
-
-    const data = await response.json();
-    const reply = data?.choices?.[0]?.message?.content;
-    if (!reply) {
-      console.error("GROQ outline empty response", data);
-      return res
-        .status(500)
-        .json({ error: "Gagal membuat outline (balasan kosong)." });
-    }
-
-    res.json({
-      reply,
-      tokens: resDeduct.tokens,
-      cost: COST,
-    });
+    const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+    res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch (e) {
     console.error("Outline error", e.message || e);
     res
@@ -1003,27 +941,8 @@ Buat profil lengkap dengan:
 - Hubungan dengan karakter lain
 - Quirks unik`;
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-        }),
-      }
-    );
-
-    const data = await response.json();
-    res.json({
-      reply: data.choices[0].message.content,
-      tokens: resDeduct.tokens,
-      cost: COST,
-    });
+    const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+    res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch {
     res.json({ reply: "❌ Character error." });
   }
@@ -1065,27 +984,8 @@ Buat worldbuilding lengkap dengan:
 - Konflik inheren
 - Detail sensorik (suara, bau, visual)`;
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-        }),
-      }
-    );
-
-    const data = await response.json();
-    res.json({
-      reply: data.choices[0].message.content,
-      tokens: resDeduct.tokens,
-      cost: COST,
-    });
+    const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+    res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch {
     res.json({ reply: "❌ World building error." });
   }

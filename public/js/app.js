@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Auto-logout on unauthorized
     if (response.status === 401) {
       clearToken();
-      const publicPages = ["/", "/index.html", "/login.html", "/register.html"]; 
+      const publicPages = ["/", "/index.html", "/login.html", "/register.html"];
       if (!publicPages.includes(window.location.pathname)) {
         alert("Sesi berakhir, silakan login lagi.");
         window.location.href = "/login.html";
