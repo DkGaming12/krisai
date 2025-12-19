@@ -502,7 +502,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const data = await res.json();
-        alert(data.error || data.reply || "Outline generated!");
+        if (data.error) throw new Error(data.error);
+        openOutlineModal(judul || "Outline", data.reply || "(kosong)");
       } catch (err) {
         console.error("Outline request error:", err);
         alert("Gagal membuat outline. Coba lagi.");
@@ -602,6 +603,24 @@ function closeSkenarioModal() {
 }
 
 /* =========================
+   MODAL OUTLINE
+========================= */
+function openOutlineModal(judul, isi) {
+  const titleEl = document.getElementById("modalOutlineJudul");
+  const bodyEl = document.getElementById("modalOutline");
+  const modalEl = document.getElementById("outlineModal");
+  if (!modalEl || !bodyEl || !titleEl) return;
+  titleEl.innerText = judul;
+  bodyEl.innerText = isi;
+  modalEl.classList.remove("hidden");
+}
+
+function closeOutlineModal() {
+  const modalEl = document.getElementById("outlineModal");
+  if (modalEl) modalEl.classList.add("hidden");
+}
+
+/* =========================
    UTIL CERPEN (SALIN & UNDUH)
 ========================= */
 function copyCerpen() {
@@ -647,6 +666,11 @@ function copySkenario() {
   navigator.clipboard.writeText(text);
 }
 
+function copyOutline() {
+  const text = document.getElementById("modalOutline").innerText || "";
+  navigator.clipboard.writeText(text);
+}
+
 function downloadSkenarioTXT() {
   const title =
     document.getElementById("modalJudulSkenario").innerText || "Skenario";
@@ -666,6 +690,36 @@ function downloadSkenarioPDF() {
   const title =
     document.getElementById("modalJudulSkenario").innerText || "Skenario";
   const text = document.getElementById("modalSkenario").innerText || "";
+  const blob = new Blob([text], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${sanitizeFilename(title)}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function downloadOutlineTXT() {
+  const title =
+    document.getElementById("modalOutlineJudul").innerText || "Outline";
+  const text = document.getElementById("modalOutline").innerText || "";
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${sanitizeFilename(title)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function downloadOutlinePDF() {
+  const title =
+    document.getElementById("modalOutlineJudul").innerText || "Outline";
+  const text = document.getElementById("modalOutline").innerText || "";
   const blob = new Blob([text], { type: "application/pdf" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");

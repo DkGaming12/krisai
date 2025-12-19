@@ -165,6 +165,28 @@
 
   <script src="../js/app.js"></script>
 
+  <!-- POPUP HASIL OUTLINE -->
+  <div id="outlineModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeOutlineModal()"></div>
+
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modalOutlineJudul">Hasil Outline</h2>
+        <button class="close-btn" onclick="closeOutlineModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <pre id="modalOutline"></pre>
+      </div>
+
+      <div class="modal-footer">
+        <button class="secondary-btn" onclick="copyOutline()">📋 Salin</button>
+        <button class="secondary-btn" onclick="downloadOutlineTXT()">📄 TXT</button>
+        <button class="primary-btn" onclick="downloadOutlinePDF()">📕 PDF</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>
