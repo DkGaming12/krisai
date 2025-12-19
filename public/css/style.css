@@ -189,10 +189,33 @@ body.sidebar-open .mobile-overlay {
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.logo:hover {
+  transform: scale(1.02);
+}
+
+.logo img,
+.logo svg {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.logo-text {
   font-size: 24px;
   font-weight: 800;
-  color: #38bdf8;
-  margin-bottom: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
 }
 
 .menu {
