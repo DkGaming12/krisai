@@ -155,9 +155,15 @@ button {
   font-size: 20px;
   font-weight: 800;
   z-index: 1100;
-  display: none;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hamburger:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--accent);
 }
 
 .mobile-overlay {
@@ -946,7 +952,7 @@ textarea {
   }
 
   .hamburger {
-    display: inline-flex;
+    display: flex;
   }
 
   .sidebar {
