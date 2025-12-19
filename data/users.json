@@ -7,5 +7,14 @@
     "tokens": 998,
     "isOwner": true,
     "createdAt": 1766057497873
+  },
+  {
+    "id": "dcda83db-c647-4893-98ad-5313069147b4",
+    "username": "Didik",
+    "email": "diamondswordd4@gmail.com",
+    "passwordHash": "$2a$10$TqcOmXPWk/4Q31.LaBEXZObSh1QOFHv1U3sXuG3cVqB8ggFbXNIvq",
+    "tokens": 583,
+    "isOwner": false,
+    "createdAt": 1766106305351
   }
 ]

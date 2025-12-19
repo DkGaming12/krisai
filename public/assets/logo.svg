@@ -1,52 +1,52 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="gradientMain" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="gradientAccent" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#667eea;stop-opacity:1" />
-    </linearGradient>
-  </defs>
+    <defs>
+        <linearGradient id="gradientMain" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="gradientAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#667eea;stop-opacity:1" />
+        </linearGradient>
+    </defs>
 
-  <!-- Outer circle -->
-  <circle cx="100" cy="100" r="95" fill="none" stroke="url(#gradientMain)" stroke-width="2" opacity="0.3"/>
+    <!-- Outer circle -->
+    <circle cx="100" cy="100" r="95" fill="none" stroke="url(#gradientMain)" stroke-width="2" opacity="0.3" />
 
-  <!-- Main rocket/AI icon -->
-  <g transform="translate(100, 100)">
-    <!-- Rocket body -->
-    <path d="M -15 -30 L -10 40 Q 0 50 10 40 L 15 -30 Z" fill="url(#gradientMain)" stroke="none"/>
-    
-    <!-- Rocket tip -->
-    <circle cx="0" cy="-35" r="8" fill="url(#gradientAccent)"/>
-    
-    <!-- Left fin -->
-    <path d="M -15 15 L -35 30 Q -30 35 -15 25 Z" fill="url(#gradientMain)" opacity="0.8"/>
-    
-    <!-- Right fin -->
-    <path d="M 15 15 L 35 30 Q 30 35 15 25 Z" fill="url(#gradientMain)" opacity="0.8"/>
-    
-    <!-- Flame 1 -->
-    <path d="M -6 42 L -10 55 Q -8 65 0 70 Q -3 60 0 50 Z" fill="#f093fb" opacity="0.8"/>
-    
-    <!-- Flame 2 -->
-    <path d="M 6 42 L 10 55 Q 8 65 0 70 Q 3 60 0 50 Z" fill="#f093fb" opacity="0.8"/>
-    
-    <!-- AI dots (neural network) -->
-    <circle cx="-8" cy="-8" r="2" fill="#00d4ff"/>
-    <circle cx="0" cy="-12" r="2" fill="#00d4ff"/>
-    <circle cx="8" cy="-8" r="2" fill="#00d4ff"/>
-    
-    <!-- Lines connecting dots -->
-    <line x1="-8" y1="-8" x2="0" y2="-12" stroke="#00d4ff" stroke-width="1" opacity="0.6"/>
-    <line x1="0" y1="-12" x2="8" y2="-8" stroke="#00d4ff" stroke-width="1" opacity="0.6"/>
-    <line x1="-8" y1="-8" x2="8" y2="-8" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
-  </g>
+    <!-- Main rocket/AI icon -->
+    <g transform="translate(100, 100)">
+        <!-- Rocket body -->
+        <path d="M -15 -30 L -10 40 Q 0 50 10 40 L 15 -30 Z" fill="url(#gradientMain)" stroke="none" />
 
-  <!-- Sparkles -->
-  <circle cx="30" cy="30" r="2" fill="#fbbf24" opacity="0.7"/>
-  <circle cx="170" cy="40" r="1.5" fill="#fbbf24" opacity="0.5"/>
-  <circle cx="160" cy="170" r="1.5" fill="#667eea" opacity="0.6"/>
+        <!-- Rocket tip -->
+        <circle cx="0" cy="-35" r="8" fill="url(#gradientAccent)" />
+
+        <!-- Left fin -->
+        <path d="M -15 15 L -35 30 Q -30 35 -15 25 Z" fill="url(#gradientMain)" opacity="0.8" />
+
+        <!-- Right fin -->
+        <path d="M 15 15 L 35 30 Q 30 35 15 25 Z" fill="url(#gradientMain)" opacity="0.8" />
+
+        <!-- Flame 1 -->
+        <path d="M -6 42 L -10 55 Q -8 65 0 70 Q -3 60 0 50 Z" fill="#f093fb" opacity="0.8" />
+
+        <!-- Flame 2 -->
+        <path d="M 6 42 L 10 55 Q 8 65 0 70 Q 3 60 0 50 Z" fill="#f093fb" opacity="0.8" />
+
+        <!-- AI dots (neural network) -->
+        <circle cx="-8" cy="-8" r="2" fill="#00d4ff" />
+        <circle cx="0" cy="-12" r="2" fill="#00d4ff" />
+        <circle cx="8" cy="-8" r="2" fill="#00d4ff" />
+
+        <!-- Lines connecting dots -->
+        <line x1="-8" y1="-8" x2="0" y2="-12" stroke="#00d4ff" stroke-width="1" opacity="0.6" />
+        <line x1="0" y1="-12" x2="8" y2="-8" stroke="#00d4ff" stroke-width="1" opacity="0.6" />
+        <line x1="-8" y1="-8" x2="8" y2="-8" stroke="#00d4ff" stroke-width="1" opacity="0.4" />
+    </g>
+
+    <!-- Sparkles -->
+    <circle cx="30" cy="30" r="2" fill="#fbbf24" opacity="0.7" />
+    <circle cx="170" cy="40" r="1.5" fill="#fbbf24" opacity="0.5" />
+    <circle cx="160" cy="170" r="1.5" fill="#667eea" opacity="0.6" />
 </svg>
