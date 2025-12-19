@@ -385,6 +385,183 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     })();
   }
+
+  /* =========================
+     NOVEL SUITE HANDLERS
+  ========================== */
+
+  function setBtnLoading(
+    btn,
+    isLoading,
+    loadingText = "KrisAI sedang menulis..."
+  ) {
+    if (!btn) return;
+    if (isLoading) {
+      btn.dataset.originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = loadingText;
+    } else {
+      btn.disabled = false;
+      if (btn.dataset.originalText) {
+        btn.textContent = btn.dataset.originalText;
+        delete btn.dataset.originalText;
+      }
+    }
+  }
+
+  // Novel Create
+  const novelCreateForm = document.getElementById("novelCreateForm");
+  if (novelCreateForm) {
+    novelCreateForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn =
+        e.submitter || novelCreateForm.querySelector('button[type="submit"]');
+      setBtnLoading(submitBtn, true);
+      try {
+        const judul = document.getElementById("novelJudul").value;
+        const genre = document.getElementById("novelGenre").value;
+        const tema = document.getElementById("novelTema").value;
+        const panjang = document.getElementById("novelPanjang").value;
+
+        const res = await apiFetch("/api/novel/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ judul, genre, tema, panjang }),
+        });
+
+        const data = await res.json();
+        alert(data.error || data.reply || "Novel generated!");
+      } catch (err) {
+        console.error("Create request error:", err);
+        alert("Gagal membuat novel. Coba lagi.");
+      } finally {
+        setBtnLoading(submitBtn, false);
+      }
+    });
+  }
+
+  // Novel Continue
+  const novelContinueForm = document.getElementById("novelContinueForm");
+  if (novelContinueForm) {
+    novelContinueForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn =
+        e.submitter || novelContinueForm.querySelector('button[type="submit"]');
+      setBtnLoading(submitBtn, true);
+      try {
+        const context = document.getElementById("novelContext").value;
+        const arahan = document.getElementById("novelArahan").value;
+
+        const res = await apiFetch("/api/novel/continue", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ context, arahan }),
+        });
+
+        const data = await res.json();
+        alert(data.error || data.reply || "Continue generated!");
+      } catch (err) {
+        console.error("Continue request error:", err);
+        alert("Gagal melanjutkan cerita. Coba lagi.");
+      } finally {
+        setBtnLoading(submitBtn, false);
+      }
+    });
+  }
+
+  // Novel Outline
+  const novelOutlineForm = document.getElementById("novelOutlineForm");
+  if (novelOutlineForm) {
+    novelOutlineForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn =
+        e.submitter || novelOutlineForm.querySelector('button[type="submit"]');
+      setBtnLoading(submitBtn, true);
+      try {
+        const judul = document.getElementById("outlineJudul").value;
+        const genre = document.getElementById("outlineGenre").value;
+        const tema = document.getElementById("outlineTema").value;
+        const jumlahBab =
+          parseInt(document.getElementById("outlineJumlahBab").value) || 10;
+
+        const res = await apiFetch("/api/novel/outline", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ judul, genre, tema, jumlahBab }),
+        });
+
+        const data = await res.json();
+        alert(data.error || data.reply || "Outline generated!");
+      } catch (err) {
+        console.error("Outline request error:", err);
+        alert("Gagal membuat outline. Coba lagi.");
+      } finally {
+        setBtnLoading(submitBtn, false);
+      }
+    });
+  }
+
+  // Novel Character
+  const novelCharacterForm = document.getElementById("novelCharacterForm");
+  if (novelCharacterForm) {
+    novelCharacterForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn =
+        e.submitter ||
+        novelCharacterForm.querySelector('button[type="submit"]');
+      setBtnLoading(submitBtn, true);
+      try {
+        const nama = document.getElementById("charNama").value;
+        const peran = document.getElementById("charPeran").value;
+        const kepribadian = document.getElementById("charKepribadian").value;
+        const latar = document.getElementById("charLatar").value;
+        const tujuan = document.getElementById("charTujuan").value;
+
+        const res = await apiFetch("/api/novel/character", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nama, peran, kepribadian, latar, tujuan }),
+        });
+
+        const data = await res.json();
+        alert(data.reply || "Character generated!");
+      } catch (err) {
+        alert("Gagal membuat karakter. Coba lagi.");
+      } finally {
+        setBtnLoading(submitBtn, false);
+      }
+    });
+  }
+
+  // Novel World Building
+  const novelWorldForm = document.getElementById("novelWorldForm");
+  if (novelWorldForm) {
+    novelWorldForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn =
+        e.submitter || novelWorldForm.querySelector('button[type="submit"]');
+      setBtnLoading(submitBtn, true);
+      try {
+        const nama = document.getElementById("worldNama").value;
+        const setting = document.getElementById("worldSetting").value;
+        const sistem = document.getElementById("worldSistem").value;
+        const budaya = document.getElementById("worldBudaya").value;
+
+        const res = await apiFetch("/api/novel/world", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nama, setting, sistem, budaya }),
+        });
+
+        const data = await res.json();
+        alert(data.reply || "World building generated!");
+      } catch (err) {
+        alert("Gagal membuat world building. Coba lagi.");
+      } finally {
+        setBtnLoading(submitBtn, false);
+      }
+    });
+  }
 });
 
 /* =========================
@@ -487,182 +664,6 @@ function downloadSkenarioPDF() {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
-}
-
-/* =========================
-     NOVEL SUITE HANDLERS
-  ========================== */
-
-function setBtnLoading(
-  btn,
-  isLoading,
-  loadingText = "KrisAI sedang menulis..."
-) {
-  if (!btn) return;
-  if (isLoading) {
-    btn.dataset.originalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = loadingText;
-  } else {
-    btn.disabled = false;
-    if (btn.dataset.originalText) {
-      btn.textContent = btn.dataset.originalText;
-      delete btn.dataset.originalText;
-    }
-  }
-}
-
-// Novel Create
-const novelCreateForm = document.getElementById("novelCreateForm");
-if (novelCreateForm) {
-  novelCreateForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const submitBtn =
-      e.submitter || novelCreateForm.querySelector('button[type="submit"]');
-    setBtnLoading(submitBtn, true);
-    try {
-      const judul = document.getElementById("novelJudul").value;
-      const genre = document.getElementById("novelGenre").value;
-      const tema = document.getElementById("novelTema").value;
-      const panjang = document.getElementById("novelPanjang").value;
-
-      const res = await apiFetch("/api/novel/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ judul, genre, tema, panjang }),
-      });
-
-      const data = await res.json();
-      alert(data.error || data.reply || "Novel generated!");
-    } catch (err) {
-      console.error("Create request error:", err);
-      alert("Gagal membuat novel. Coba lagi.");
-    } finally {
-      setBtnLoading(submitBtn, false);
-    }
-  });
-}
-
-// Novel Continue
-const novelContinueForm = document.getElementById("novelContinueForm");
-if (novelContinueForm) {
-  novelContinueForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const submitBtn =
-      e.submitter || novelContinueForm.querySelector('button[type="submit"]');
-    setBtnLoading(submitBtn, true);
-    try {
-      const context = document.getElementById("novelContext").value;
-      const arahan = document.getElementById("novelArahan").value;
-
-      const res = await apiFetch("/api/novel/continue", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ context, arahan }),
-      });
-
-      const data = await res.json();
-      alert(data.error || data.reply || "Continue generated!");
-    } catch (err) {
-      console.error("Continue request error:", err);
-      alert("Gagal melanjutkan cerita. Coba lagi.");
-    } finally {
-      setBtnLoading(submitBtn, false);
-    }
-  });
-}
-
-// Novel Outline
-const novelOutlineForm = document.getElementById("novelOutlineForm");
-if (novelOutlineForm) {
-  novelOutlineForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const submitBtn =
-      e.submitter || novelOutlineForm.querySelector('button[type="submit"]');
-    setBtnLoading(submitBtn, true);
-    try {
-      const judul = document.getElementById("outlineJudul").value;
-      const genre = document.getElementById("outlineGenre").value;
-      const tema = document.getElementById("outlineTema").value;
-      const jumlahBab =
-        parseInt(document.getElementById("outlineJumlahBab").value) || 10;
-
-      const res = await apiFetch("/api/novel/outline", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ judul, genre, tema, jumlahBab }),
-      });
-
-      const data = await res.json();
-      alert(data.error || data.reply || "Outline generated!");
-    } catch (err) {
-      console.error("Outline request error:", err);
-      alert("Gagal membuat outline. Coba lagi.");
-    } finally {
-      setBtnLoading(submitBtn, false);
-    }
-  });
-}
-
-// Novel Character
-const novelCharacterForm = document.getElementById("novelCharacterForm");
-if (novelCharacterForm) {
-  novelCharacterForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const submitBtn =
-      e.submitter || novelCharacterForm.querySelector('button[type="submit"]');
-    setBtnLoading(submitBtn, true);
-    try {
-      const nama = document.getElementById("charNama").value;
-      const peran = document.getElementById("charPeran").value;
-      const kepribadian = document.getElementById("charKepribadian").value;
-      const latar = document.getElementById("charLatar").value;
-      const tujuan = document.getElementById("charTujuan").value;
-
-      const res = await apiFetch("/api/novel/character", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nama, peran, kepribadian, latar, tujuan }),
-      });
-
-      const data = await res.json();
-      alert(data.reply || "Character generated!");
-    } catch (err) {
-      alert("Gagal membuat karakter. Coba lagi.");
-    } finally {
-      setBtnLoading(submitBtn, false);
-    }
-  });
-}
-
-// Novel World Building
-const novelWorldForm = document.getElementById("novelWorldForm");
-if (novelWorldForm) {
-  novelWorldForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const submitBtn =
-      e.submitter || novelWorldForm.querySelector('button[type="submit"]');
-    setBtnLoading(submitBtn, true);
-    try {
-      const nama = document.getElementById("worldNama").value;
-      const setting = document.getElementById("worldSetting").value;
-      const sistem = document.getElementById("worldSistem").value;
-      const budaya = document.getElementById("worldBudaya").value;
-
-      const res = await apiFetch("/api/novel/world", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nama, setting, sistem, budaya }),
-      });
-
-      const data = await res.json();
-      alert(data.reply || "World building generated!");
-    } catch (err) {
-      alert("Gagal membuat world building. Coba lagi.");
-    } finally {
-      setBtnLoading(submitBtn, false);
-    }
-  });
 }
 
 function sanitizeFilename(name) {
