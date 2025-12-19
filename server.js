@@ -786,18 +786,20 @@ Berikan evaluasi ringkas, poin perbaikan, dan contoh perbaikan untuk teks beriku
 ========================= */
 app.post("/api/novel/create", authRequired, async (req, res) => {
   try {
+    // Terima kedua versi payload (versi UI saat ini dan versi lama)
     const {
       judul,
       genre,
       tema,
       tokohUtama,
+      tokoh,
       setting,
       konflik,
-      panjangBab = 800,
+      panjangBab,
+      panjang,
     } = req.body;
 
-    // Dynamic cost: base 5 + (target words / 100)
-    const targetWords = parseInt(panjangBab) || 800;
+    const targetWords = parseInt(panjang || panjangBab) || 800;
     const COST = Math.max(5, Math.ceil(5 + targetWords / 100));
 
     const resDeduct = deductTokens(req.user.id, COST);
@@ -810,9 +812,9 @@ app.post("/api/novel/create", authRequired, async (req, res) => {
 Judul: ${judul}
 Genre: ${genre}
 Tema: ${tema}
-Tokoh Utama: ${tokohUtama}
-Setting: ${setting}
-Konflik Awal: ${konflik}
+Tokoh Utama: ${tokohUtama || tokoh || "(tidak diisi)"}
+Setting: ${setting || "(tidak diisi)"}
+Konflik Awal: ${konflik || "(tidak diisi)"}
 
 Tulis bab 1 sepanjang ${targetWords} kata dengan narasi menarik, dialog natural, dan deskripsi vivid.`;
 
@@ -847,7 +849,10 @@ Tulis bab 1 sepanjang ${targetWords} kata dengan narasi menarik, dialog natural,
 ========================= */
 app.post("/api/novel/continue", authRequired, async (req, res) => {
   try {
-    const { konteks, arahCerita, panjang = 600 } = req.body;
+    const { konteks, arahCerita, panjang = 600, context, arahan } = req.body;
+
+    const ctx = konteks || context;
+    const arah = arahCerita || arahan || "Lanjutkan sesuai konteks.";
 
     const targetWords = parseInt(panjang) || 600;
     const COST = Math.max(4, Math.ceil(4 + targetWords / 100));
@@ -861,9 +866,9 @@ app.post("/api/novel/continue", authRequired, async (req, res) => {
     const prompt = `Lanjutkan cerita berikut dengan ${targetWords} kata:
 
 Konteks sebelumnya:
-${konteks}
+${ctx || "(tidak diisi)"}
 
-Arah cerita selanjutnya: ${arahCerita}
+Arah cerita selanjutnya: ${arah}
 
 Tulis kelanjutan yang koheren dan menarik.`;
 
@@ -1006,7 +1011,13 @@ Buat profil lengkap dengan:
 ========================= */
 app.post("/api/novel/world", authRequired, async (req, res) => {
   try {
-    const { namaWorld, tipe, elemen, aturan, budaya } = req.body;
+    const { namaWorld, tipe, elemen, aturan, budaya, nama, setting, sistem } =
+      req.body;
+
+    const namaFinal = namaWorld || nama;
+    const tipeFinal = tipe || setting;
+    const elemenFinal = elemen || sistem;
+    const aturanFinal = aturan || "(tidak diisi)";
 
     const COST = 4;
 
@@ -1017,10 +1028,10 @@ app.post("/api/novel/world", authRequired, async (req, res) => {
         .json({ error: "Saldo token habis", tokens: resDeduct.tokens });
 
     const prompt = `Bangun dunia untuk novel:
-Nama: ${namaWorld}
-Tipe: ${tipe}
-Elemen Unik: ${elemen}
-Aturan/Hukum: ${aturan}
+Nama: ${namaFinal}
+Tipe: ${tipeFinal}
+Elemen Unik: ${elemenFinal}
+Aturan/Hukum: ${aturanFinal}
 Budaya: ${budaya}
 
 Buat worldbuilding lengkap dengan:
