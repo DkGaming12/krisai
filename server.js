@@ -580,6 +580,13 @@ app.get("/api/topup/status/:orderId", authRequired, async (req, res) => {
 ========================= */
 app.post("/api/chat", authRequired, async (req, res) => {
   try {
+    // If GROQ key is missing or placeholder, inform client without charging tokens
+    if (!GROQ_API_KEY || GROQ_API_KEY === "REPLACE_ME") {
+      return res.json({
+        reply:
+          "⚠️ Chat AI belum aktif. Admin perlu mengisi GROQ_API_KEY di Railway Variables dulu.",
+      });
+    }
     const COST = 1;
     const resDeduct = deductTokens(req.user.id, COST);
     if (!resDeduct.ok)
