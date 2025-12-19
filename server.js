@@ -839,8 +839,9 @@ Tulis bab 1 sepanjang ${targetWords} kata dengan narasi menarik, dialog natural,
       tokens: resDeduct.tokens,
       cost: COST,
     });
-  } catch {
-    res.json({ reply: "❌ Novel create error." });
+  } catch (e) {
+    console.error("Novel create error", e.message || e);
+    res.status(500).json({ error: "❌ Create error: " + (e.message || "unknown") });
   }
 });
 
@@ -893,8 +894,9 @@ Tulis kelanjutan yang koheren dan menarik.`;
       tokens: resDeduct.tokens,
       cost: COST,
     });
-  } catch {
-    res.json({ reply: "❌ Novel continue error." });
+  } catch (e) {
+    console.error("Novel continue error", e.message || e);
+    res.status(500).json({ error: "❌ Continue error: " + (e.message || "unknown") });
   }
 });
 
@@ -943,9 +945,7 @@ Buat struktur outline dengan:
     if (!response.ok) {
       const errText = await response.text();
       console.error("GROQ outline error", errText);
-      return res
-        .status(500)
-        .json({ error: "Gagal membuat outline (GROQ)." });
+      return res.status(500).json({ error: "Gagal membuat outline (GROQ)." });
     }
 
     const data = await response.json();
@@ -963,8 +963,8 @@ Buat struktur outline dengan:
       cost: COST,
     });
   } catch (e) {
-    console.error("Outline error", e);
-    res.status(500).json({ reply: "❌ Outline error." });
+    console.error("Outline error", e.message || e);
+    res.status(500).json({ error: "❌ Outline error: " + (e.message || "unknown") });
   }
 });
 
