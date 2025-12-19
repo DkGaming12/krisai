@@ -305,9 +305,19 @@ app.post("/api/auth/login", (req, res) => {
         u.email.toLowerCase() === String(credential || "").toLowerCase() ||
         u.username.toLowerCase() === String(credential || "").toLowerCase()
     );
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    if (!user) {
+      console.warn("Login gagal: user tidak ditemukan", {
+        credential: String(credential || ""),
+      });
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
     const ok = bcrypt.compareSync(password || "", user.passwordHash);
-    if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+    if (!ok) {
+      console.warn("Login gagal: password salah", {
+        credential: String(credential || ""),
+      });
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
     const token = signToken({
       id: user.id,
       username: user.username,
