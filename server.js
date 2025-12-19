@@ -269,7 +269,7 @@ app.post("/api/auth/register", (req, res) => {
       username,
       email,
       passwordHash: bcrypt.hashSync(password, 10),
-      tokens: DEFAULT_TOKENS + 500, // Bonus 500 token untuk member baru
+      tokens: 500, // Bonus 500 token untuk member baru
       isOwner: false,
       createdAt: Date.now(),
     };
