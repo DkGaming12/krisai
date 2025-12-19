@@ -47,6 +47,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const response = await fetch(url, Object.assign({}, options, { headers }));
 
+    // Auto-logout on unauthorized
+    if (response.status === 401) {
+      clearToken();
+      const publicPages = ["/", "/index.html", "/login.html", "/register.html"]; 
+      if (!publicPages.includes(window.location.pathname)) {
+        alert("Sesi berakhir, silakan login lagi.");
+        window.location.href = "/login.html";
+      }
+      throw new Error("Unauthorized");
+    }
+
     // Check if token habis
     if (!response.ok) {
       try {

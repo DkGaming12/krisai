@@ -841,7 +841,9 @@ Tulis bab 1 sepanjang ${targetWords} kata dengan narasi menarik, dialog natural,
     });
   } catch (e) {
     console.error("Novel create error", e.message || e);
-    res.status(500).json({ error: "❌ Create error: " + (e.message || "unknown") });
+    res
+      .status(500)
+      .json({ error: "❌ Create error: " + (e.message || "unknown") });
   }
 });
 
@@ -896,7 +898,9 @@ Tulis kelanjutan yang koheren dan menarik.`;
     });
   } catch (e) {
     console.error("Novel continue error", e.message || e);
-    res.status(500).json({ error: "❌ Continue error: " + (e.message || "unknown") });
+    res
+      .status(500)
+      .json({ error: "❌ Continue error: " + (e.message || "unknown") });
   }
 });
 
@@ -964,7 +968,9 @@ Buat struktur outline dengan:
     });
   } catch (e) {
     console.error("Outline error", e.message || e);
-    res.status(500).json({ error: "❌ Outline error: " + (e.message || "unknown") });
+    res
+      .status(500)
+      .json({ error: "❌ Outline error: " + (e.message || "unknown") });
   }
 });
 
