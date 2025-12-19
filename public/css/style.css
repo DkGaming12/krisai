@@ -612,6 +612,9 @@ select:focus {
 /* HILANGKAN RESIZE ANEH */
 textarea {
   resize: none;
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
 }
 
 /* ===== EDITOR AI LAYOUT FIX ===== */
@@ -867,6 +870,8 @@ textarea {
   padding: 22px;
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.32);
   backdrop-filter: blur(6px);
+  position: relative;
+  z-index: 1;
 }
 
 .section-header {
