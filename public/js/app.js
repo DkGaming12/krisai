@@ -489,6 +489,118 @@ function downloadSkenarioPDF() {
   URL.revokeObjectURL(url);
 }
 
+  /* =========================
+     NOVEL SUITE HANDLERS
+  ========================== */
+  
+  // Novel Create
+  const novelCreateForm = document.getElementById("novelCreateForm");
+  if (novelCreateForm) {
+    novelCreateForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const judul = document.getElementById("novelJudul").value;
+      const genre = document.getElementById("novelGenre").value;
+      const tema = document.getElementById("novelTema").value;
+      const panjang = document.getElementById("novelPanjang").value;
+
+      const res = await apiFetch("/api/novel/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ judul, genre, tema, panjang }),
+      });
+
+      const data = await res.json();
+      alert(data.reply || "Novel generated!");
+    });
+  }
+
+  // Novel Continue
+  const novelContinueForm = document.getElementById("novelContinueForm");
+  if (novelContinueForm) {
+    novelContinueForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const context = document.getElementById("novelContext").value;
+      const arahan = document.getElementById("novelArahan").value;
+
+      const res = await apiFetch("/api/novel/continue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ context, arahan }),
+      });
+
+      const data = await res.json();
+      alert(data.reply || "Continue generated!");
+    });
+  }
+
+  // Novel Outline
+  const novelOutlineForm = document.getElementById("novelOutlineForm");
+  if (novelOutlineForm) {
+    novelOutlineForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const judul = document.getElementById("outlineJudul").value;
+      const genre = document.getElementById("outlineGenre").value;
+      const tema = document.getElementById("outlineTema").value;
+      const jumlahBab = parseInt(document.getElementById("outlineJumlahBab").value) || 10;
+
+      const res = await apiFetch("/api/novel/outline", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ judul, genre, tema, jumlahBab }),
+      });
+
+      const data = await res.json();
+      alert(data.reply || "Outline generated!");
+    });
+  }
+
+  // Novel Character
+  const novelCharacterForm = document.getElementById("novelCharacterForm");
+  if (novelCharacterForm) {
+    novelCharacterForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nama = document.getElementById("charNama").value;
+      const peran = document.getElementById("charPeran").value;
+      const kepribadian = document.getElementById("charKepribadian").value;
+      const latar = document.getElementById("charLatar").value;
+      const tujuan = document.getElementById("charTujuan").value;
+
+      const res = await apiFetch("/api/novel/character", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nama, peran, kepribadian, latar, tujuan }),
+      });
+
+      const data = await res.json();
+      alert(data.reply || "Character generated!");
+    });
+  }
+
+  // Novel World Building
+  const novelWorldForm = document.getElementById("novelWorldForm");
+  if (novelWorldForm) {
+    novelWorldForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nama = document.getElementById("worldNama").value;
+      const setting = document.getElementById("worldSetting").value;
+      const sistem = document.getElementById("worldSistem").value;
+      const budaya = document.getElementById("worldBudaya").value;
+
+      const res = await apiFetch("/api/novel/world", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nama, setting, sistem, budaya }),
+      });
+
+      const data = await res.json();
+      alert(data.reply || "World building generated!");
+    });
+  }
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 function sanitizeFilename(name) {
   return name.replace(/[^a-z0-9\-_. ]/gi, "_").trim() || "file";
 }

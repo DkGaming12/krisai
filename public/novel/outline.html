@@ -92,15 +92,15 @@
             <p class="section-subtext">Sebutkan konflik, tujuan akhir, dan emosi utama. AI akan memecah jadi
               beat/episode dengan cliffhanger.</p>
 
-            <div class="form-grid">
+            <form id="novelOutlineForm" class="form-grid">
               <div class="field">
                 <label>Judul Cerita</label>
-                <input type="text" placeholder="Judul cerita">
+                <input id="outlineJudul" type="text" placeholder="Judul cerita" required>
               </div>
 
               <div class="field">
                 <label>Genre</label>
-                <select>
+                <select id="outlineGenre">
                   <option>Fantasi</option>
                   <option>Sci-Fi</option>
                   <option>Romance</option>
@@ -110,65 +110,24 @@
               </div>
 
               <div class="field">
-                <label>Jenis Outline</label>
-                <select>
-                  <option>3 Bab (Pendek)</option>
-                  <option>12 Episode</option>
-                  <option>24 Episode</option>
-                  <option>36 Episode</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label>Target Pembaca</label>
-                <select>
-                  <option>Remaja</option>
-                  <option>Dewasa</option>
-                  <option>Umum</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label>Target Emosi</label>
-                <select>
-                  <option>Harapan</option>
-                  <option>Ketegangan</option>
-                  <option>Inspiratif</option>
-                  <option>Melankolis</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label>Gaya Narasi</label>
-                <select>
-                  <option>Cepat & ringkas</option>
-                  <option>Deskriptif</option>
-                  <option>Dialog-forward</option>
-                  <option>Cinematic</option>
+                <label>Jumlah Bab</label>
+                <select id="outlineJumlahBab">
+                  <option value="3">3 Bab (Pendek)</option>
+                  <option value="12">12 Episode</option>
+                  <option value="24">24 Episode</option>
+                  <option value="36">36 Episode</option>
                 </select>
               </div>
 
               <div class="field full">
-                <label>Konflik Utama</label>
-                <textarea rows="3" placeholder="Konflik besar yang menggerakkan cerita"></textarea>
+                <label>Tema / Konflik Utama</label>
+                <textarea id="outlineTema" rows="3" placeholder="Konflik besar yang menggerakkan cerita" required></textarea>
               </div>
 
-              <div class="field full">
-                <label>Ending yang Dituju</label>
-                <textarea rows="3"
-                  placeholder="Arah akhir yang ingin dicapai, twist besar, atau resolusi utama"></textarea>
+              <div class="form-actions full">
+                <button type="submit" class="primary-btn">🧩 Buat Outline</button>
               </div>
-
-              <div class="field full">
-                <label>Catatan Tambahan</label>
-                <textarea rows="3"
-                  placeholder="Pacing, jumlah POV, batas konten, atau tema kecil yang wajib ada"></textarea>
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="primary-btn">🧩 Buat Outline</button>
-            </div>
+            </form>
           </section>
 
           <section class="glass-card">

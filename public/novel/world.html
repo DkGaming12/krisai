@@ -92,15 +92,15 @@
             <p class="section-subtext">Tulis pilar utama dunia: sosial, teknologi/sihir, sejarah, dan aturan. Hindari
               info-dump saat bab dimulai.</p>
 
-            <div class="form-grid">
+            <form id="novelWorldForm" class="form-grid">
               <div class="field">
                 <label>Nama Dunia / Tempat</label>
-                <input type="text" placeholder="Nama dunia atau wilayah">
+                <input id="worldNama" type="text" placeholder="Nama dunia atau wilayah" required>
               </div>
 
               <div class="field">
-                <label>Jenis Dunia</label>
-                <select>
+                <label>Jenis Dunia / Setting</label>
+                <select id="worldSetting">
                   <option>Realistis</option>
                   <option>Fantasi</option>
                   <option>Sci-Fi</option>
@@ -120,12 +120,12 @@
 
               <div class="field full">
                 <label>Sistem Sosial / Politik</label>
-                <textarea rows="3" placeholder="Struktur pemerintahan, kelas sosial, ekonomi"></textarea>
+                <textarea id="worldSistem" rows="3" placeholder="Struktur pemerintahan, kelas sosial, ekonomi" required></textarea>
               </div>
 
               <div class="field full">
-                <label>Teknologi / Sihir</label>
-                <textarea rows="3" placeholder="Teknologi, sihir, atau aturan sistem kekuatan"></textarea>
+                <label>Budaya / Teknologi / Sihir</label>
+                <textarea id="worldBudaya" rows="3" placeholder="Teknologi, sihir, atau aturan sistem kekuatan" required></textarea>
               </div>
 
               <div class="field full">
@@ -145,8 +145,9 @@
             </div>
 
             <div class="form-actions">
-              <button type="button" class="primary-btn">🌍 Simpan Dunia</button>
+              <button type="submit" class="primary-btn">🌍 Simpan Dunia</button>
             </div>
+            </form>
           </section>
 
           <section class="glass-card">

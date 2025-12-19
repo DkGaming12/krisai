@@ -92,15 +92,15 @@
             <p class="section-subtext">Isi elemen dasar lalu dalami motivasi, luka lama, dan hubungan inti agar karakter
               terasa hidup.</p>
 
-            <div class="form-grid">
+            <form id="novelCharacterForm" class="form-grid">
               <div class="field">
                 <label>Nama Karakter</label>
-                <input type="text" placeholder="Nama karakter">
+                <input id="charNama" type="text" placeholder="Nama karakter" required>
               </div>
 
               <div class="field">
                 <label>Peran dalam Cerita</label>
-                <select>
+                <select id="charPeran">
                   <option>Tokoh Utama</option>
                   <option>Tokoh Pendukung</option>
                   <option>Antagonis</option>
@@ -125,17 +125,17 @@
 
               <div class="field full">
                 <label>Kepribadian & Sifat Khas</label>
-                <textarea rows="3" placeholder="Sifat, kebiasaan, cara berpikir, mannerism"></textarea>
+                <textarea id="charKepribadian" rows="3" placeholder="Sifat, kebiasaan, cara berpikir, mannerism" required></textarea>
               </div>
 
               <div class="field full">
                 <label>Latar & Luka Lama</label>
-                <textarea rows="3" placeholder="Asal, trauma kecil/besar, hal yang membentuknya"></textarea>
+                <textarea id="charLatar" rows="3" placeholder="Asal, trauma kecil/besar, hal yang membentuknya" required></textarea>
               </div>
 
               <div class="field full">
                 <label>Tujuan Hidup (Goal)</label>
-                <textarea rows="3" placeholder="Apa yang ingin dicapai karakter"></textarea>
+                <textarea id="charTujuan" rows="3" placeholder="Apa yang ingin dicapai karakter" required></textarea>
               </div>
 
               <div class="field full">
@@ -165,8 +165,9 @@
             </div>
 
             <div class="form-actions">
-              <button type="button" class="primary-btn">🧍 Simpan Karakter</button>
+              <button type="submit" class="primary-btn">🧑 Simpan Karakter</button>
             </div>
+            </form>
           </section>
 
           <section class="glass-card">

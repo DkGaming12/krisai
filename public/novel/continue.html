@@ -92,7 +92,7 @@
             <p class="section-subtext">Berikan ringkasan padat supaya AI tahu apa yang harus dibawa, dihindari, dan
               dikembangkan.</p>
 
-            <div class="form-grid">
+            <form id="novelContinueForm" class="form-grid">
               <div class="field">
                 <label>Pilih Proyek Cerita</label>
                 <select>
@@ -135,20 +135,21 @@
 
               <div class="field full">
                 <label>Ringkasan Bab Sebelumnya</label>
-                <textarea rows="4"
-                  placeholder="Highlight konflik, keputusan karakter, dan cliffhanger yang terjadi"></textarea>
+                <textarea id="novelContext" rows="4"
+                  placeholder="Highlight konflik, keputusan karakter, dan cliffhanger yang terjadi" required></textarea>
               </div>
 
               <div class="field full">
-                <label>Catatan & Batasan</label>
-                <textarea rows="3"
+                <label>Catatan & Arahan</label>
+                <textarea id="novelArahan" rows="3"
                   placeholder="Hal yang harus dipertahankan, karakter yang tidak boleh dilupakan, kata tabu, rating, dsb"></textarea>
               </div>
             </div>
 
             <div class="form-actions">
-              <button type="button" class="primary-btn">▶️ Lanjutkan Cerita</button>
+              <button type="submit" class="primary-btn">▶️ Lanjutkan Cerita</button>
             </div>
+            </form>
           </section>
 
           <section class="glass-card">

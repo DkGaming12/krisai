@@ -92,15 +92,15 @@
             <p class="section-subtext">Isi elemen utama supaya AI paham arah cerita, tokoh, dan rasa yang mau dibangun.
             </p>
 
-            <div class="form-grid">
+            <form id="novelCreateForm" class="form-grid">
               <div class="field">
                 <label>Judul Novel</label>
-                <input type="text" placeholder="Orbit Terakhir / Senja di Kota Hujan">
+                <input id="novelJudul" type="text" placeholder="Orbit Terakhir / Senja di Kota Hujan" required>
               </div>
 
               <div class="field">
                 <label>Genre</label>
-                <select>
+                <select id="novelGenre">
                   <option>Fantasi</option>
                   <option>Sci-Fi</option>
                   <option>Romance</option>
@@ -111,7 +111,7 @@
 
               <div class="field">
                 <label>Tema Utama</label>
-                <input type="text" placeholder="Takdir · kehilangan · harapan">
+                <input id="novelTema" type="text" placeholder="Takdir · kehilangan · harapan" required>
               </div>
 
               <div class="field">
@@ -141,10 +141,10 @@
 
               <div class="field">
                 <label>Panjang Cerita</label>
-                <select>
-                  <option>1000 kata</option>
-                  <option>1500 kata</option>
-                  <option>2000+ kata</option>
+                <select id="novelPanjang">
+                  <option value="1000">1000 kata</option>
+                  <option value="1500">1500 kata</option>
+                  <option value="2000">2000+ kata</option>
                 </select>
               </div>
 
@@ -172,8 +172,9 @@
             </div>
 
             <div class="form-actions">
-              <button type="button" class="primary-btn">✨ Buat Bab Pertama</button>
+              <button type="submit" class="primary-btn">✨ Buat Bab Pertama</button>
             </div>
+            </form>
           </section>
 
           <section class="glass-card">
