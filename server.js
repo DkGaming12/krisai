@@ -60,39 +60,85 @@ const TOKEN_PACKAGES = [
   },
 ];
 
+// In-memory cache for production stability (Railway ephemeral storage)
+let usersCache = null;
+let transactionsCache = null;
+
 function readUsers() {
   try {
-    if (!fs.existsSync(USERS_FILE)) return [];
+    // Return from memory cache if available
+    if (usersCache !== null) {
+      return usersCache;
+    }
+    
+    if (!fs.existsSync(USERS_FILE)) {
+      usersCache = [];
+      return [];
+    }
     const raw = fs.readFileSync(USERS_FILE, "utf-8");
-    return JSON.parse(raw || "[]");
-  } catch {
-    return [];
+    usersCache = JSON.parse(raw || "[]");
+    return usersCache;
+  } catch (e) {
+    console.error("Read users error:", e);
+    return usersCache || [];
   }
 }
 
 function writeUsers(arr) {
   try {
+    usersCache = arr; // Update memory cache immediately
+    
+    // Ensure data directory exists
+    const dataDir = path.dirname(USERS_FILE);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    
     fs.writeFileSync(USERS_FILE, JSON.stringify(arr, null, 2), "utf-8");
+    console.log(`✅ Users saved (${arr.length} users)`);
   } catch (e) {
     console.error("Failed write users:", e);
+    // Still update cache even if file write fails
+    usersCache = arr;
   }
 }
 
 function readTransactions() {
   try {
-    if (!fs.existsSync(TRANSACTIONS_FILE)) return [];
+    // Return from memory cache if available
+    if (transactionsCache !== null) {
+      return transactionsCache;
+    }
+    
+    if (!fs.existsSync(TRANSACTIONS_FILE)) {
+      transactionsCache = [];
+      return [];
+    }
     const raw = fs.readFileSync(TRANSACTIONS_FILE, "utf-8");
-    return JSON.parse(raw || "[]");
-  } catch {
-    return [];
+    transactionsCache = JSON.parse(raw || "[]");
+    return transactionsCache;
+  } catch (e) {
+    console.error("Read transactions error:", e);
+    return transactionsCache || [];
   }
 }
 
 function writeTransactions(arr) {
   try {
+    transactionsCache = arr; // Update memory cache immediately
+    
+    // Ensure data directory exists
+    const dataDir = path.dirname(TRANSACTIONS_FILE);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    
     fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(arr, null, 2), "utf-8");
+    console.log(`✅ Transactions saved (${arr.length} transactions)`);
   } catch (e) {
     console.error("Failed write transactions:", e);
+    // Still update cache even if file write fails
+    transactionsCache = arr;
   }
 }
 
