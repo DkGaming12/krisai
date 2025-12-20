@@ -673,19 +673,11 @@ function downloadTXT() {
 }
 
 function downloadPDF() {
-  // Implementasi simpel: unduh sebagai .txt dengan ekstensi .pdf (placeholder)
-  // Jika ingin PDF sebenarnya, perlu lib tambahan di server/klien.
   const title = document.getElementById("modalJudul").innerText || "Cerpen";
   const text = document.getElementById("modalCerpen").innerText || "";
-  const blob = new Blob([text], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${sanitizeFilename(title)}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  downloadTextAsPDF(title, text).catch(() => {
+    alert("Gagal membuat PDF. Coba lagi.");
+  });
 }
 
 /* =========================
@@ -720,15 +712,9 @@ function downloadSkenarioPDF() {
   const title =
     document.getElementById("modalJudulSkenario").innerText || "Skenario";
   const text = document.getElementById("modalSkenario").innerText || "";
-  const blob = new Blob([text], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${sanitizeFilename(title)}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  downloadTextAsPDF(title, text).catch(() => {
+    alert("Gagal membuat PDF. Coba lagi.");
+  });
 }
 
 function downloadOutlineTXT() {
@@ -750,19 +736,63 @@ function downloadOutlinePDF() {
   const title =
     document.getElementById("modalOutlineJudul").innerText || "Outline";
   const text = document.getElementById("modalOutline").innerText || "";
-  const blob = new Blob([text], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${sanitizeFilename(title)}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  downloadTextAsPDF(title, text).catch(() => {
+    alert("Gagal membuat PDF. Coba lagi.");
+  });
 }
 
 function sanitizeFilename(name) {
   return name.replace(/[^a-z0-9\-_. ]/gi, "_").trim() || "file";
+}
+
+// ===== jsPDF loader & PDF generator =====
+async function ensureJSPDF() {
+  if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+  if (!window.__jspdfLoading) {
+    window.__jspdfLoading = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js";
+      script.onload = () => resolve(window.jspdf && window.jspdf.jsPDF);
+      script.onerror = () => reject(new Error("Gagal memuat jsPDF"));
+      document.head.appendChild(script);
+    });
+  }
+  const jsPDF = await window.__jspdfLoading;
+  if (!jsPDF) throw new Error("jsPDF tidak tersedia");
+  return jsPDF;
+}
+
+async function downloadTextAsPDF(title, text) {
+  const jsPDF = await ensureJSPDF();
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 40;
+  let y = margin;
+
+  const cleanTitle = title || "Dokumen";
+  doc.setFontSize(16);
+  try { doc.setFont(undefined, "bold"); } catch {}
+  const titleLines = doc.splitTextToSize(cleanTitle, pageWidth - margin * 2);
+  doc.text(titleLines, margin, y);
+  y += 24;
+  try { doc.setFont(undefined, "normal"); } catch {}
+
+  doc.setFontSize(12);
+  const maxWidth = pageWidth - margin * 2;
+  const lines = doc.splitTextToSize(text || "", maxWidth);
+  const lineHeight = 16;
+
+  for (const line of lines) {
+    if (y + lineHeight > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+    doc.text(line, margin, y);
+    y += lineHeight;
+  }
+
+  doc.save(`${sanitizeFilename(cleanTitle)}.pdf`);
 }
 
 /* =========================
@@ -837,15 +867,9 @@ function downloadResultTXT() {
 function downloadResultPDF() {
   const title = document.getElementById("resultModalTitle")?.innerText || "Hasil";
   const text = document.getElementById("resultModalBody")?.innerText || "";
-  const blob = new Blob([text], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${sanitizeFilename(title)}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  downloadTextAsPDF(title, text).catch(() => {
+    alert("Gagal membuat PDF. Coba lagi.");
+  });
 }
 
 /* =========================
