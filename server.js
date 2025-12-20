@@ -28,6 +28,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-please-change";
 const DEFAULT_TOKENS = Number(process.env.DEFAULT_TOKENS || 100);
 const USERS_FILE = path.join(process.cwd(), "data", "users.json");
 const TRANSACTIONS_FILE = path.join(process.cwd(), "data", "transactions.json");
+const HISTORY_FILE = path.join(process.cwd(), "data", "history.json");
 
 // Midtrans Configuration
 const snap = new midtransClient.Snap({
@@ -234,6 +235,46 @@ function addTokens(userId, amount) {
   users[idx].tokens = (users[idx].tokens || 0) + amount;
   writeUsers(users);
   return true;
+}
+
+function readHistory() {
+  try {
+    if (!fs.existsSync(HISTORY_FILE)) {
+      return [];
+    }
+    const raw = fs.readFileSync(HISTORY_FILE, "utf-8");
+    return JSON.parse(raw || "[]");
+  } catch (e) {
+    console.error("Read history error:", e);
+    return [];
+  }
+}
+
+function writeHistory(arr) {
+  try {
+    const dataDir = path.dirname(HISTORY_FILE);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(arr, null, 2), "utf-8");
+  } catch (e) {
+    console.error("Failed write history:", e);
+  }
+}
+
+function saveToHistory(userId, feature, title, content, tokens) {
+  const history = readHistory();
+  history.push({
+    id: uuidv4(),
+    userId,
+    feature, // 'chat', 'cerpen', 'skenario', 'novel_create', 'novel_continue', etc
+    title: (title || feature).slice(0, 100),
+    excerpt: (content || "").slice(0, 300),
+    content, // Full content (besar)
+    tokensUsed: tokens || 0,
+    timestamp: Date.now(),
+  });
+  writeHistory(history);
 }
 
 function signToken(payload) {
@@ -681,6 +722,9 @@ app.post("/api/chat", authRequired, async (req, res) => {
       system: SYSTEM_PROMPT,
     });
 
+    // Save to history
+    saveToHistory(req.user.id, "chat", message.slice(0, 50), reply, COST);
+
     res.json({ reply, tokens: resDeduct.tokens });
   } catch (err) {
     res.json({ reply: "❌ Chat error." });
@@ -713,6 +757,10 @@ Panjang ${targetWords} kata.
 `;
 
     const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+
+    // Save to history
+    saveToHistory(req.user.id, "cerpen", judul, reply, COST);
+
     res.json({ reply, tokens: resDeduct.tokens });
   } catch {
     res.json({ reply: "❌ Cerpen error." });
@@ -751,6 +799,10 @@ DIALOG
 `;
 
     const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+
+    // Save to history
+    saveToHistory(req.user.id, "skenario", judul, reply, COST);
+
     res.json({ reply, tokens: resDeduct.tokens });
   } catch {
     res.json({ reply: "❌ Skenario error." });
@@ -784,6 +836,10 @@ Berikan evaluasi ringkas, poin perbaikan, dan contoh perbaikan untuk teks beriku
 \n\n${teks}`;
 
     const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+
+    // Save to history
+    saveToHistory(req.user.id, "rewrite", teks.slice(0, 50), reply, COST);
+
     res.json({ reply: reply || "(kosong)", tokens: resDeduct.tokens });
   } catch (e) {
     res.json({ reply: "❌ Rewrite error." });
@@ -828,6 +884,10 @@ Konflik Awal: ${konflik || "(tidak diisi)"}
 Tulis bab 1 sepanjang ${targetWords} kata dengan narasi menarik, dialog natural, dan deskripsi vivid.`;
 
     const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+
+    // Save to history
+    saveToHistory(req.user.id, "novel_create", judul, reply, COST);
+
     res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch (e) {
     console.error("Novel create error", e.message || e);
@@ -866,6 +926,11 @@ Arah cerita selanjutnya: ${arah}
 Tulis kelanjutan yang koheren dan menarik.`;
 
     const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+
+    // Save to history
+    const contextTitle = ctx ? ctx.slice(0, 50) : "Lanjutan";
+    saveToHistory(req.user.id, "novel_continue", contextTitle, reply, COST);
+
     res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch (e) {
     console.error("Novel continue error", e.message || e);
@@ -903,6 +968,10 @@ Buat struktur outline dengan:
 - Resolusi`;
 
     const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+
+    // Save to history
+    saveToHistory(req.user.id, "novel_outline", judul, reply, COST);
+
     res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch (e) {
     console.error("Outline error", e.message || e);
@@ -942,6 +1011,10 @@ Buat profil lengkap dengan:
 - Quirks unik`;
 
     const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+
+    // Save to history
+    saveToHistory(req.user.id, "novel_character", nama, reply, COST);
+
     res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch {
     res.json({ reply: "❌ Character error." });
@@ -985,6 +1058,10 @@ Buat worldbuilding lengkap dengan:
 - Detail sensorik (suara, bau, visual)`;
 
     const reply = await aiComplete({ prompt, system: SYSTEM_PROMPT });
+
+    // Save to history
+    saveToHistory(req.user.id, "novel_world", namaFinal, reply, COST);
+
     res.json({ reply, tokens: resDeduct.tokens, cost: COST });
   } catch {
     res.json({ reply: "❌ World building error." });
@@ -992,7 +1069,57 @@ Buat worldbuilding lengkap dengan:
 });
 
 /* =========================
-   HISTORY (BARU)
+   HISTORY (PER FITUR)
+========================= */
+app.get("/api/history/:feature", authRequired, (req, res) => {
+  try {
+    const { feature } = req.params; // 'cerpen', 'skenario', 'novel_create', etc
+    const history = readHistory();
+    const userHistory = history
+      .filter((h) => h.userId === req.user.id && h.feature === feature)
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .map((h) => ({
+        id: h.id,
+        title: h.title,
+        excerpt: h.excerpt,
+        tokensUsed: h.tokensUsed,
+        timestamp: h.timestamp,
+      }));
+
+    res.json({ items: userHistory });
+  } catch (e) {
+    res.json({ items: [] });
+  }
+});
+
+app.get("/api/history/:feature/:id", authRequired, (req, res) => {
+  try {
+    const { feature, id } = req.params;
+    const history = readHistory();
+    const item = history.find(
+      (h) =>
+        h.id === id &&
+        h.userId === req.user.id &&
+        h.feature === feature
+    );
+
+    if (!item) {
+      return res.status(404).json({ error: "History not found" });
+    }
+
+    res.json({
+      title: item.title,
+      content: item.content,
+      tokensUsed: item.tokensUsed,
+      timestamp: item.timestamp,
+    });
+  } catch (e) {
+    res.status(500).json({ error: "Failed to load history" });
+  }
+});
+
+/* =========================
+   HISTORY (LAMA - untuk kompatibilitas)
 ========================= */
 app.get("/api/history", authRequired, (req, res) => {
   try {

@@ -821,3 +821,76 @@ function downloadResultPDF() {
   a.remove();
   URL.revokeObjectURL(url);
 }
+
+/* =========================
+   HISTORY LOADER (per fitur)
+========================= */
+async function loadFeatureHistory(feature, containerSelector) {
+  const container = document.querySelector(containerSelector);
+  if (!container) return;
+
+  try {
+    const res = await apiFetch(`/api/history/${feature}`);
+    const data = await res.json();
+
+    if (!data.items || data.items.length === 0) {
+      container.innerHTML = "<p>Tidak ada riwayat.</p>";
+      return;
+    }
+
+    container.innerHTML = "";
+    for (const item of data.items) {
+      const div = document.createElement("div");
+      div.className = "history-item";
+      div.style.cssText = `
+        padding: 12px;
+        margin-bottom: 8px;
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      `;
+      div.onmouseover = () => {
+        div.style.background = "rgba(102, 126, 234, 0.2)";
+        div.style.borderColor = "rgba(102, 126, 234, 0.5)";
+      };
+      div.onmouseout = () => {
+        div.style.background = "rgba(102, 126, 234, 0.1)";
+        div.style.borderColor = "rgba(102, 126, 234, 0.3)";
+      };
+
+      const titleDiv = document.createElement("div");
+      titleDiv.style.cssText = "font-weight: bold; font-size: 14px; margin-bottom: 4px;";
+      titleDiv.textContent = item.title || "Tanpa judul";
+
+      const metaDiv = document.createElement("div");
+      metaDiv.style.cssText = "font-size: 12px; color: rgba(255,255,255,0.6);";
+      const time = new Date(item.timestamp).toLocaleDateString("id-ID", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      metaDiv.textContent = `${time} • ${item.tokensUsed || 0} token`;
+
+      div.appendChild(titleDiv);
+      div.appendChild(metaDiv);
+
+      div.addEventListener("click", async () => {
+        try {
+          const detailRes = await apiFetch(`/api/history/${feature}/${item.id}`);
+          const detail = await detailRes.json();
+          openResultModal(detail.title, detail.content);
+        } catch (e) {
+          console.error("Gagal load history item:", e);
+        }
+      });
+
+      container.appendChild(div);
+    }
+  } catch (e) {
+    container.innerHTML = "<p>Gagal memuat riwayat.</p>";
+    console.error("Load history error:", e);
+  }
+}
