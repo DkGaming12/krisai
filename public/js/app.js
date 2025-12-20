@@ -857,7 +857,16 @@ async function loadFeatureHistory(feature, containerSelector) {
 
   try {
     const res = await apiFetch(`/api/history/${feature}`);
-    const data = await res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      // Fallback jika response bukan JSON (mis. HTML 404)
+      try {
+        await res.text();
+      } catch {}
+      data = { items: [] };
+    }
 
     if (!data.items || data.items.length === 0) {
       container.innerHTML = "<p>Tidak ada riwayat.</p>";
@@ -916,7 +925,8 @@ async function loadFeatureHistory(feature, containerSelector) {
       container.appendChild(div);
     }
   } catch (e) {
-    container.innerHTML = "<p>Gagal memuat riwayat.</p>";
+    // Fallback ke kosong jika gagal memuat
+    container.innerHTML = "<p>Tidak ada riwayat.</p>";
     console.error("Load history error:", e);
   }
 }
