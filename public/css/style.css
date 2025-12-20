@@ -1129,8 +1129,9 @@ textarea {
   .novel-hero {
     padding: 18px 16px;
   }
-  width: 100%;
+
   .novel-hero .meta-box {
+    width: 100%;
     gap: 10px;
   }
 
