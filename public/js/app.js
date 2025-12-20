@@ -578,6 +578,32 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // ====== LOAD FEATURE HISTORIES IF CONTAINERS EXIST ======
+  if (document.querySelector("#historyCreate")) {
+    loadFeatureHistory("novel_create", "#historyCreate");
+  }
+  if (document.querySelector("#historyContinue")) {
+    loadFeatureHistory("novel_continue", "#historyContinue");
+  }
+  if (document.querySelector("#historyOutline")) {
+    loadFeatureHistory("novel_outline", "#historyOutline");
+  }
+  if (document.querySelector("#historyCharacter")) {
+    loadFeatureHistory("novel_character", "#historyCharacter");
+  }
+  if (document.querySelector("#historyWorld")) {
+    loadFeatureHistory("novel_world", "#historyWorld");
+  }
+  if (document.querySelector("#historyCerpen")) {
+    loadFeatureHistory("cerpen", "#historyCerpen");
+  }
+  if (document.querySelector("#historySkenario")) {
+    loadFeatureHistory("skenario", "#historySkenario");
+  }
+  if (document.querySelector("#historyRewrite")) {
+    loadFeatureHistory("rewrite", "#historyRewrite");
+  }
 });
 
 /* =========================
