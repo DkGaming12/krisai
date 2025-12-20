@@ -22,6 +22,17 @@ if (!fs.existsSync(dataDir)) {
   console.log("✅ Created data directory");
 }
 
+// Ensure history file exists
+const historyPath = path.join(process.cwd(), "data", "history.json");
+if (!fs.existsSync(historyPath)) {
+  try {
+    fs.writeFileSync(historyPath, "[]", "utf-8");
+    console.log("✅ Initialized history.json");
+  } catch (e) {
+    console.error("⚠️ Failed to init history.json", e);
+  }
+}
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-please-change";
