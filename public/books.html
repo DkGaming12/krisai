@@ -1,281 +1,296 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buku Fitur - KrisAI</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Fitur - KrisAI</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <div class="app">
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="logo">
-        <span class="logo-text">📚 KrisAI</span>
-      </div>
-      <div class="menu">
-        <a href="index.html" class="menu-item">🏠 Beranda</a>
-        <a href="chat.html" class="menu-item">💬 Chat</a>
-        <a href="cerpen.html" class="menu-item">📖 Cerpen</a>
-        <a href="scenario.html" class="menu-item">🎬 Skenario</a>
-        <a href="rewrite.html" class="menu-item">✏️ Rewrite</a>
-        <a href="books.html" class="menu-item active">📚 Buku Fitur</a>
-        <a href="novel/create.html" class="menu-item">📝 Novel</a>
-        <div style="flex: 1;"></div>
-        <a href="settings.html" class="menu-item">⚙️ Pengaturan</a>
-      </div>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="main">
-      <div class="content-card">
-        <div class="card-header">
-          <div>
-            <h1>📚 Buku Fitur</h1>
-            <p style="color: var(--muted); margin-top: 8px;">Jelajahi semua fitur dan alat yang tersedia</p>
-          </div>
+    <div class="app">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">
+                <span class="logo-text">📚 KrisAI</span>
+            </div>
+            <div class="menu">
+                <a href="index.html" class="menu-item">🏠 Beranda</a>
+                <a href="chat.html" class="menu-item">💬 Chat</a>
+                <a href="cerpen.html" class="menu-item">📖 Cerpen</a>
+                <a href="scenario.html" class="menu-item">🎬 Skenario</a>
+                <a href="rewrite.html" class="menu-item">✏️ Rewrite</a>
+                <a href="books.html" class="menu-item active">📚 Buku Fitur</a>
+                <a href="novel/create.html" class="menu-item">📝 Novel</a>
+                <div style="flex: 1;"></div>
+                <a href="settings.html" class="menu-item">⚙️ Pengaturan</a>
+            </div>
         </div>
 
-        <!-- GRID FITUR -->
-        <div class="books-grid">
-          <!-- ROW 1: PEMBELAJARAN -->
-          <div class="book-section">
-            <h3 style="margin-top: 0; color: #38bdf8;">📚 Pembelajaran</h3>
-            
-            <div class="book-card" onclick="openFeature('kelola-website')">
-              <div class="book-icon">🌐</div>
-              <h4>Kelola Website Penulis</h4>
-              <p>Kelola dan optimalkan website penulis Anda</p>
-            </div>
+        <!-- MAIN CONTENT -->
+        <div class="main">
+            <div class="content-card">
+                <div class="card-header">
+                    <div>
+                        <h1>📚 Buku Fitur</h1>
+                        <p style="color: var(--muted); margin-top: 8px;">Jelajahi semua fitur dan alat yang tersedia</p>
+                    </div>
+                </div>
 
-            <div class="book-card" onclick="openFeature('modul-ajar')">
-              <div class="book-icon">📖</div>
-              <h4>Asisten Modul Ajar</h4>
-              <p>Buat dan edit modul pembelajaran interaktif</p>
-            </div>
+                <!-- GRID FITUR -->
+                <div class="books-grid">
+                    <!-- ROW 1: PEMBELAJARAN -->
+                    <div class="book-section">
+                        <h3 style="margin-top: 0; color: #38bdf8;">📚 Pembelajaran</h3>
 
-            <div class="book-card" onclick="openFeature('nonfksi')">
-              <div class="book-icon">📚</div>
-              <h4>Asisten Nonfksi</h4>
-              <p>Bantu membuat konten nonfksi berkualitas</p>
-            </div>
+                        <div class="book-card" onclick="location.href='website-manager.html'">
+                            <div class="book-icon">🌐</div>
+                            <h4>Kelola Website Penulis</h4>
+                            <p>Kelola dan optimalkan website penulis Anda</p>
+                        </div>
 
-            <div class="book-card" onclick="openFeature('ilmiah')">
-              <div class="book-icon">🔬</div>
-              <h4>Asisten Ilmiah</h4>
-              <p>Dukung penulisan karya ilmiah profesional</p>
-            </div>
-          </div>
+                        <div class="book-card" onclick="openFeature('modul-ajar')">
+                            <div class="book-icon">📖</div>
+                            <h4>Asisten Modul Ajar</h4>
+                            <p>Buat dan edit modul pembelajaran interaktif</p>
+                        </div>
 
-          <!-- ROW 2: KREATIF -->
-          <div class="book-section">
-            <h3 style="margin-top: 0; color: #a855f7;">🎨 Kreatif</h3>
-            
-            <div class="book-card" onclick="location.href='cerpen.html'">
-              <div class="book-icon">✍️</div>
-              <h4>Asisten Cerpen</h4>
-              <p>Tulis cerpen pendek dengan bantuan AI</p>
-            </div>
+                        <div class="book-card" onclick="openFeature('nonfksi')">
+                            <div class="book-icon">📚</div>
+                            <h4>Asisten Nonfksi</h4>
+                            <p>Bantu membuat konten nonfksi berkualitas</p>
+                        </div>
 
-            <div class="book-card" onclick="location.href='novel/create.html'">
-              <div class="book-icon">📕</div>
-              <h4>Asisten Novel</h4>
-              <p>Rancang dan kembangkan cerita novel penuh</p>
-            </div>
+                        <div class="book-card" onclick="openFeature('ilmiah')">
+                            <div class="book-icon">🔬</div>
+                            <h4>Asisten Ilmiah</h4>
+                            <p>Dukung penulisan karya ilmiah profesional</p>
+                        </div>
+                    </div>
 
-            <div class="book-card" onclick="openFeature('chatstory')">
-              <div class="book-icon">💬</div>
-              <h4>Asisten Chatstory</h4>
-              <p>Buat cerita interaktif berbentuk percakapan</p>
-            </div>
+                    <!-- ROW 2: KREATIF -->
+                    <div class="book-section">
+                        <h3 style="margin-top: 0; color: #a855f7;">🎨 Kreatif</h3>
 
-            <div class="book-card" onclick="openFeature('medsos')">
-              <div class="book-icon">📱</div>
-              <h4>Postingan Medsos</h4>
-              <p>Buat konten menarik untuk media sosial</p>
-            </div>
-          </div>
+                        <div class="book-card" onclick="location.href='cerpen.html'">
+                            <div class="book-icon">✍️</div>
+                            <h4>Asisten Cerpen</h4>
+                            <p>Tulis cerpen pendek dengan bantuan AI</p>
+                        </div>
 
-          <!-- ROW 3: KONTEN LAINNYA -->
-          <div class="book-section">
-            <h3 style="margin-top: 0; color: #ec4899;">🎯 Lainnya</h3>
-            
-            <div class="book-card" onclick="location.href='chat.html'">
-              <div class="book-icon">💭</div>
-              <h4>Chat AI</h4>
-              <p>Ajukan pertanyaan dan dapatkan jawaban dari AI</p>
-            </div>
+                        <div class="book-card" onclick="location.href='novel/create.html'">
+                            <div class="book-icon">📕</div>
+                            <h4>Asisten Novel</h4>
+                            <p>Rancang dan kembangkan cerita novel penuh</p>
+                        </div>
 
-            <div class="book-card" onclick="location.href='scenario.html'">
-              <div class="book-icon">🎬</div>
-              <h4>Skenario</h4>
-              <p>Buat skenario untuk film, game, atau simulasi</p>
-            </div>
+                        <div class="book-card" onclick="openFeature('chatstory')">
+                            <div class="book-icon">💬</div>
+                            <h4>Asisten Chatstory</h4>
+                            <p>Buat cerita interaktif berbentuk percakapan</p>
+                        </div>
 
-            <div class="book-card" onclick="location.href='rewrite.html'">
-              <div class="book-icon">📝</div>
-              <h4>Rewrite Teks</h4>
-              <p>Tulis ulang dan optimalkan teks Anda</p>
-            </div>
+                        <div class="book-card" onclick="openFeature('medsos')">
+                            <div class="book-icon">📱</div>
+                            <h4>Postingan Medsos</h4>
+                            <p>Buat konten menarik untuk media sosial</p>
+                        </div>
+                    </div>
 
-            <div class="book-card" onclick="openFeature('editor')">
-              <div class="book-icon">⚡</div>
-              <h4>Editor Cepat</h4>
-              <p>Edit dokumen dengan fitur-fitur canggih</p>
+                    <!-- ROW 3: KONTEN LAINNYA -->
+                    <div class="book-section">
+                        <h3 style="margin-top: 0; color: #ec4899;">🎯 Lainnya</h3>
+
+                        <div class="book-card" onclick="location.href='chat.html'">
+                            <div class="book-icon">💭</div>
+                            <h4>Chat AI</h4>
+                            <p>Ajukan pertanyaan dan dapatkan jawaban dari AI</p>
+                        </div>
+
+                        <div class="book-card" onclick="location.href='scenario.html'">
+                            <div class="book-icon">🎬</div>
+                            <h4>Skenario</h4>
+                            <p>Buat skenario untuk film, game, atau simulasi</p>
+                        </div>
+
+                        <div class="book-card" onclick="location.href='rewrite.html'">
+                            <div class="book-icon">📝</div>
+                            <h4>Rewrite Teks</h4>
+                            <p>Tulis ulang dan optimalkan teks Anda</p>
+                        </div>
+
+                        <div class="book-card" onclick="openFeature('editor')">
+                            <div class="book-icon">⚡</div>
+                            <h4>Editor Cepat</h4>
+                            <p>Edit dokumen dengan fitur-fitur canggih</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INFO TOKENS -->
+                <div
+                    style="margin-top: 32px; padding: 20px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px;">
+                    <p style="margin: 0; color: #38bdf8;">
+                        <strong>💡 Tips:</strong> Setiap fitur menggunakan token. Pastikan Anda memiliki cukup token
+                        sebelum mulai.
+                        <a href="topup.html" style="color: #38bdf8; text-decoration: underline;">Top-up sekarang →</a>
+                    </p>
+                </div>
             </div>
-          </div>
         </div>
+    </div>
 
-        <!-- INFO TOKENS -->
-        <div style="margin-top: 32px; padding: 20px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px;">
-          <p style="margin: 0; color: #38bdf8;">
-            <strong>💡 Tips:</strong> Setiap fitur menggunakan token. Pastikan Anda memiliki cukup token sebelum mulai. 
-            <a href="topup.html" style="color: #38bdf8; text-decoration: underline;">Top-up sekarang →</a>
-          </p>
+    <!-- MODAL COMING SOON -->
+    <div id="comingSoonModal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeComingSoon()"></div>
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="comingSoonTitle">Fitur Segera Hadir</h2>
+                <button class="close-btn" onclick="closeComingSoon()">✕</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 40px 24px;">
+                <div style="font-size: 48px; margin-bottom: 20px;">🔧</div>
+                <p style="font-size: 18px; color: #e5e7eb; margin-bottom: 10px;" id="comingSoonMessage">
+                    Fitur ini sedang dikembangkan.
+                </p>
+                <p style="color: #94a3b8; margin-bottom: 20px;">
+                    Akan segera tersedia untuk membantu Anda menciptakan konten berkualitas.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="primary-btn" onclick="closeComingSoon()" style="width: 100%;">Tutup</button>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- MODAL COMING SOON -->
-  <div id="comingSoonModal" class="modal hidden">
-    <div class="modal-overlay" onclick="closeComingSoon()"></div>
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 id="comingSoonTitle">Fitur Segera Hadir</h2>
-        <button class="close-btn" onclick="closeComingSoon()">✕</button>
-      </div>
-      <div class="modal-body" style="text-align: center; padding: 40px 24px;">
-        <div style="font-size: 48px; margin-bottom: 20px;">🔧</div>
-        <p style="font-size: 18px; color: #e5e7eb; margin-bottom: 10px;" id="comingSoonMessage">
-          Fitur ini sedang dikembangkan.
-        </p>
-        <p style="color: #94a3b8; margin-bottom: 20px;">
-          Akan segera tersedia untuk membantu Anda menciptakan konten berkualitas.
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button class="primary-btn" onclick="closeComingSoon()" style="width: 100%;">Tutup</button>
-      </div>
-    </div>
-  </div>
+    <script src="js/app.js"></script>
+    <script>
+        // Set active menu
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const booksMenu = document.querySelector('a[href="books.html"]');
+            if (booksMenu) {
+                booksMenu.classList.add('active');
+            }
 
-  <script src="js/app.js"></script>
-  <script>
-    // Set active menu
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.menu-item').forEach(item => {
-        item.classList.remove('active');
-      });
-      document.querySelector('a[href="books.html"]').classList.add('active');
-    });
+            // Run tests if in development mode (check for ?test in URL)
+            if (window.location.search.includes('test')) {
+                const script = document.createElement('script');
+                script.src = 'test-books-functions.js';
+                document.body.appendChild(script);
+            }
+        });
 
-    function openFeature(featureKey) {
-      const titles = {
-        'kelola-website': 'Kelola Website Penulis',
-        'modul-ajar': 'Asisten Modul Ajar',
-        'nonfksi': 'Asisten Nonfksi',
-        'ilmiah': 'Asisten Ilmiah',
-        'chatstory': 'Asisten Chatstory',
-        'medsos': 'Postingan Medsos',
-        'editor': 'Editor Cepat',
-      };
+        function openFeature(featureKey) {
+            const titles = {
+                'kelola-website': 'Kelola Website Penulis',
+                'modul-ajar': 'Asisten Modul Ajar',
+                'nonfksi': 'Asisten Nonfksi',
+                'ilmiah': 'Asisten Ilmiah',
+                'chatstory': 'Asisten Chatstory',
+                'medsos': 'Postingan Medsos',
+                'editor': 'Editor Cepat',
+            };
 
-      const messages = {
-        'kelola-website': 'Fitur manajemen website penulis sedang dikembangkan untuk memberikan Anda kontrol penuh atas situs web Anda.',
-        'modul-ajar': 'Asisten modul ajar membantu Anda membuat materi pembelajaran yang terstruktur dan menarik.',
-        'nonfksi': 'Alat ini membantu Anda menulis karya nonfksi dengan gaya dan struktur yang profesional.',
-        'ilmiah': 'Asisten ilmiah mendukung penulisan artikel, skripsi, dan karya ilmiah lainnya dengan standar akademik.',
-        'chatstory': 'Buat cerita interaktif berbentuk percakapan yang menarik pembaca melalui dialog dinamis.',
-        'medsos': 'Buat postingan media sosial yang menarik, engaging, dan disesuaikan dengan platform pilihan Anda.',
-        'editor': 'Editor cepat dengan fitur-fitur advanced untuk mengedit dan memformat dokumen Anda dengan mudah.',
-      };
+            const messages = {
+                'kelola-website': 'Fitur manajemen website penulis sedang dikembangkan untuk memberikan Anda kontrol penuh atas situs web Anda.',
+                'modul-ajar': 'Asisten modul ajar membantu Anda membuat materi pembelajaran yang terstruktur dan menarik.',
+                'nonfksi': 'Alat ini membantu Anda menulis karya nonfksi dengan gaya dan struktur yang profesional.',
+                'ilmiah': 'Asisten ilmiah mendukung penulisan artikel, skripsi, dan karya ilmiah lainnya dengan standar akademik.',
+                'chatstory': 'Buat cerita interaktif berbentuk percakapan yang menarik pembaca melalui dialog dinamis.',
+                'medsos': 'Buat postingan media sosial yang menarik, engaging, dan disesuaikan dengan platform pilihan Anda.',
+                'editor': 'Editor cepat dengan fitur-fitur advanced untuk mengedit dan memformat dokumen Anda dengan mudah.',
+            };
 
-      const modal = document.getElementById('comingSoonModal');
-      document.getElementById('comingSoonTitle').textContent = titles[featureKey] || 'Fitur';
-      document.getElementById('comingSoonMessage').textContent = messages[featureKey] || 'Fitur ini sedang dikembangkan.';
-      modal.classList.remove('hidden');
-    }
+            const modal = document.getElementById('comingSoonModal');
+            document.getElementById('comingSoonTitle').textContent = titles[featureKey] || 'Fitur';
+            document.getElementById('comingSoonMessage').textContent = messages[featureKey] || 'Fitur ini sedang dikembangkan.';
+            modal.classList.remove('hidden');
+        }
 
-    function closeComingSoon() {
-      document.getElementById('comingSoonModal').classList.add('hidden');
-    }
-  </script>
+        function closeComingSoon() {
+            document.getElementById('comingSoonModal').classList.add('hidden');
+        }
+    </script>
 
-  <style>
-    .books-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
-      margin-top: 24px;
-    }
+    <style>
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
 
-    .book-section {
-      display: contents;
-    }
+        .book-section {
+            display: contents;
+        }
 
-    .book-section h3 {
-      grid-column: 1 / -1;
-      font-size: 20px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    }
+        .book-section h3 {
+            grid-column: 1 / -1;
+            font-size: 20px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .book-card {
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(34, 211, 238, 0.08));
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      border-radius: 16px;
-      padding: 24px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+        .book-card {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(34, 211, 238, 0.08));
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    .book-card:hover {
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(34, 211, 238, 0.12));
-      border-color: rgba(56, 189, 248, 0.4);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(56, 189, 248, 0.2);
-    }
+        .book-card:hover {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(34, 211, 238, 0.12));
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(56, 189, 248, 0.2);
+        }
 
-    .book-icon {
-      font-size: 32px;
-      line-height: 1;
-    }
+        .book-icon {
+            font-size: 32px;
+            line-height: 1;
+        }
 
-    .book-card h4 {
-      margin: 0;
-      font-size: 16px;
-      color: #e5e7eb;
-      font-weight: 600;
-    }
+        .book-card h4 {
+            margin: 0;
+            font-size: 16px;
+            color: #e5e7eb;
+            font-weight: 600;
+        }
 
-    .book-card p {
-      margin: 0;
-      font-size: 13px;
-      color: #94a3b8;
-      line-height: 1.4;
-    }
+        .book-card p {
+            margin: 0;
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
 
-    @media (max-width: 900px) {
-      .books-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 16px;
-      }
-    }
+        @media (max-width: 900px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 16px;
+            }
+        }
 
-    @media (max-width: 560px) {
-      .books-grid {
-        grid-template-columns: 1fr;
-      }
+        @media (max-width: 560px) {
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
 
-      .book-card {
-        padding: 16px;
-      }
-    }
-  </style>
+            .book-card {
+                padding: 16px;
+            }
+        }
+    </style>
 </body>
+
 </html>

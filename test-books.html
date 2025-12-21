@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Books.html</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .test {
+            margin: 10px 0;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 5px;
+        }
+
+        .pass {
+            border-left: 3px solid #0f0;
+        }
+
+        .fail {
+            border-left: 3px solid #f00;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Test Books.html Functionality</h1>
+    <div id="results"></div>
+    <hr>
+    <button onclick="runTests()">🔄 Run All Tests</button>
+    <button onclick="testModal()">Test Modal</button>
+    <button onclick="testLinks()">Test Links</button>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function log(message, pass = true) {
+            const div = document.createElement('div');
+            div.className = 'test ' + (pass ? 'pass' : 'fail');
+            div.innerHTML = `${pass ? '✅' : '❌'} ${message}`;
+            results.appendChild(div);
+        }
+
+        async function runTests() {
+            results.innerHTML = '<h2>Running Tests...</h2>';
+
+            // Test 1: Check if books.html loads
+            try {
+                const res = await fetch('http://localhost:3000/books.html');
+                if (res.ok) {
+                    log('books.html loads successfully');
+                    const html = await res.text();
+
+                    // Test 2: Check if grid exists
+                    if (html.includes('books-grid')) {
+                        log('Grid structure found');
+                    } else {
+                        log('Grid structure NOT found', false);
+                    }
+
+                    // Test 3: Check if book cards exist
+                    if (html.includes('book-card')) {
+                        log('Book cards found');
+                    } else {
+                        log('Book cards NOT found', false);
+                    }
+
+                    // Test 4: Check if modal exists
+                    if (html.includes('comingSoonModal')) {
+                        log('Coming Soon modal found');
+                    } else {
+                        log('Coming Soon modal NOT found', false);
+                    }
+
+                    // Test 5: Check if openFeature function exists
+                    if (html.includes('function openFeature')) {
+                        log('openFeature function found');
+                    } else {
+                        log('openFeature function NOT found', false);
+                    }
+
+                    // Test 6: Check links to existing features
+                    const links = ['cerpen.html', 'scenario.html', 'chat.html', 'novel/create.html', 'rewrite.html'];
+                    links.forEach(link => {
+                        if (html.includes(link)) {
+                            log(`Link to ${link} found`);
+                        } else {
+                            log(`Link to ${link} NOT found`, false);
+                        }
+                    });
+
+                } else {
+                    log('books.html failed to load', false);
+                }
+            } catch (e) {
+                log('Error loading books.html: ' + e.message, false);
+            }
+
+            log('Tests completed!');
+        }
+
+        function testModal() {
+            window.open('http://localhost:3000/books.html', '_blank');
+            alert('Manual test: Click pada card "Kelola Website Penulis" dan periksa apakah modal muncul.');
+        }
+
+        function testLinks() {
+            window.open('http://localhost:3000/books.html', '_blank');
+            alert('Manual test: Click pada card "Asisten Cerpen" dan periksa apakah redirect ke cerpen.html');
+        }
+
+        // Auto run on load
+        window.onload = () => {
+            setTimeout(runTests, 500);
+        };
+    </script>
+</body>
+
+</html>

@@ -108,14 +108,17 @@ async function aiComplete({ prompt, messages, system }) {
             ],
           };
 
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${GROQ_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!res.ok) {
         const txt = await res.text();
@@ -148,7 +151,9 @@ async function aiComplete({ prompt, messages, system }) {
       (system ? `System instruction:\n${system}\n\n` : "") +
       (messages
         ? messages
-            .map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`)
+            .map(
+              (m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`
+            )
             .join("\n\n")
         : prompt || "");
 
@@ -158,7 +163,9 @@ async function aiComplete({ prompt, messages, system }) {
     throw new Error("Gemini empty response");
   }
 
-  throw new Error("No AI provider configured. Set GROQ_API_KEY or GEMINI_API_KEY.");
+  throw new Error(
+    "No AI provider configured. Set GROQ_API_KEY or GEMINI_API_KEY."
+  );
 }
 
 function readUsers() {
@@ -711,7 +718,7 @@ app.get("/api/topup/status/:orderId", authRequired, async (req, res) => {
 app.post("/api/chat", authRequired, async (req, res) => {
   try {
     // If no provider configured at all, inform client without charging tokens
-    if (((!GROQ_API_KEY || GROQ_API_KEY === "REPLACE_ME") && !GEMINI_API_KEY)) {
+    if ((!GROQ_API_KEY || GROQ_API_KEY === "REPLACE_ME") && !GEMINI_API_KEY) {
       return res.json({
         reply:
           "⚠️ Chat AI belum aktif. Admin perlu mengisi kunci AI (GROQ_API_KEY atau GEMINI_API_KEY) di Railway Variables dulu.",
@@ -727,9 +734,7 @@ app.post("/api/chat", authRequired, async (req, res) => {
     if (!message) return res.json({ reply: "Pesan kosong." });
 
     const reply = await aiComplete({
-      messages: [
-        { role: "user", content: message },
-      ],
+      messages: [{ role: "user", content: message }],
       system: SYSTEM_PROMPT,
     });
 
@@ -1108,10 +1113,7 @@ app.get("/api/history/:feature/:id", authRequired, (req, res) => {
     const { feature, id } = req.params;
     const history = readHistory();
     const item = history.find(
-      (h) =>
-        h.id === id &&
-        h.userId === req.user.id &&
-        h.feature === feature
+      (h) => h.id === id && h.userId === req.user.id && h.feature === feature
     );
 
     if (!item) {
@@ -1148,6 +1150,138 @@ app.get("/api/history", authRequired, (req, res) => {
     res.json({ items });
   } catch (e) {
     res.json({ items: [] });
+  }
+});
+
+/* =========================
+   WEBSITE MANAGER
+========================= */
+const WEBSITE_CONFIG_FILE = path.join(
+  process.cwd(),
+  "data",
+  "website-configs.json"
+);
+
+// Initialize website configs file
+if (!fs.existsSync(WEBSITE_CONFIG_FILE)) {
+  try {
+    fs.writeFileSync(WEBSITE_CONFIG_FILE, "{}", "utf-8");
+  } catch (e) {
+    console.error("⚠️ Failed to init website-configs.json", e);
+  }
+}
+
+function readWebsiteConfigs() {
+  try {
+    if (!fs.existsSync(WEBSITE_CONFIG_FILE)) return {};
+    const raw = fs.readFileSync(WEBSITE_CONFIG_FILE, "utf-8");
+    return JSON.parse(raw || "{}");
+  } catch (e) {
+    console.error("Read website configs error:", e);
+    return {};
+  }
+}
+
+function writeWebsiteConfigs(configs) {
+  try {
+    fs.writeFileSync(
+      WEBSITE_CONFIG_FILE,
+      JSON.stringify(configs, null, 2),
+      "utf-8"
+    );
+  } catch (e) {
+    console.error("Failed write website configs:", e);
+  }
+}
+
+// Generate website config with AI
+app.post("/api/website/generate-config", authRequired, async (req, res) => {
+  try {
+    const { genre } = req.body;
+    if (!genre) return res.status(400).json({ error: "Genre required" });
+
+    const user = getUserById(req.user.id);
+    if (!user) return res.status(401).json({ error: "User not found" });
+
+    const COST = 50;
+    if ((user.tokens || 0) < COST) {
+      return res.status(403).json({ error: "Token tidak cukup" });
+    }
+
+    const prompt = `Generate a complete author website configuration for a ${genre} writer. Return a JSON object with these fields:
+- websiteName: author's pen name (uppercase, professional)
+- heroTitle: book or collection title (creative, matches genre)
+- heroSubtitle: subtitle or tagline
+- biography: 2-3 paragraphs about the author (fictional but realistic)
+- occupation: author's profession
+- statusTag: current status (e.g., "ACTIVE", "WRITING", "PUBLISHING")
+- heroCaption: short caption for hero section
+
+Make it creative, professional, and genre-appropriate. Return ONLY valid JSON, no markdown.`;
+
+    const result = await aiComplete({ prompt });
+
+    // Try to parse JSON from response
+    let config = {};
+    try {
+      const jsonMatch = result.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        config = JSON.parse(jsonMatch[0]);
+      }
+    } catch (e) {
+      // Fallback: create basic config
+      config = {
+        websiteName: genre.toUpperCase() + " AUTHOR",
+        heroTitle: "STORIES OF " + genre.toUpperCase(),
+        heroSubtitle: "A " + genre + " Collection",
+        biography: result.slice(0, 500),
+        occupation: "Author & Writer",
+        statusTag: "ACTIVE",
+      };
+    }
+
+    deductTokens(req.user.id, COST);
+    res.json({ success: true, config, tokensUsed: COST });
+  } catch (err) {
+    console.error("Generate config error:", err);
+    res.status(500).json({ error: "Failed to generate config" });
+  }
+});
+
+// Save website configuration
+app.post("/api/website/save-config", authRequired, (req, res) => {
+  try {
+    const config = req.body;
+    const configs = readWebsiteConfigs();
+
+    // Save config per user
+    configs[req.user.id] = {
+      ...config,
+      updatedAt: Date.now(),
+    };
+
+    writeWebsiteConfigs(configs);
+    res.json({ success: true, message: "Configuration saved" });
+  } catch (err) {
+    console.error("Save config error:", err);
+    res.status(500).json({ error: "Failed to save configuration" });
+  }
+});
+
+// Get website configuration
+app.get("/api/website/get-config", authRequired, (req, res) => {
+  try {
+    const configs = readWebsiteConfigs();
+    const userConfig = configs[req.user.id];
+
+    if (!userConfig) {
+      return res.json({ config: null });
+    }
+
+    res.json({ config: userConfig });
+  } catch (err) {
+    console.error("Get config error:", err);
+    res.status(500).json({ error: "Failed to load configuration" });
   }
 });
 

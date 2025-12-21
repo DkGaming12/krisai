@@ -74,6 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return response;
   };
 
+  // Expose to pages using inline scripts (e.g., website manager)
+  window.apiFetch = apiFetch;
+
   // Modal notifikasi token habis
   function showTokenModal(currentTokens) {
     // Remove existing modal if any
@@ -539,7 +542,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = await res.json();
         if (data.error) throw new Error(data.error);
-        openResultModal(`Karakter: ${nama || "Profil"}`, data.reply || "(kosong)");
+        openResultModal(
+          `Karakter: ${nama || "Profil"}`,
+          data.reply || "(kosong)"
+        );
       } catch (err) {
         openResultModal("Gagal", "Gagal membuat karakter. Coba lagi.");
       } finally {
@@ -570,7 +576,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = await res.json();
         if (data.error) throw new Error(data.error);
-        openResultModal(`World: ${nama || "Worldbuilding"}`, data.reply || "(kosong)");
+        openResultModal(
+          `World: ${nama || "Worldbuilding"}`,
+          data.reply || "(kosong)"
+        );
       } catch (err) {
         openResultModal("Gagal", "Gagal membuat world building. Coba lagi.");
       } finally {
@@ -751,7 +760,8 @@ async function ensureJSPDF() {
   if (!window.__jspdfLoading) {
     window.__jspdfLoading = new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js";
+      script.src =
+        "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js";
       script.onload = () => resolve(window.jspdf && window.jspdf.jsPDF);
       script.onerror = () => reject(new Error("Gagal memuat jsPDF"));
       document.head.appendChild(script);
@@ -772,11 +782,15 @@ async function downloadTextAsPDF(title, text) {
 
   const cleanTitle = title || "Dokumen";
   doc.setFontSize(16);
-  try { doc.setFont(undefined, "bold"); } catch {}
+  try {
+    doc.setFont(undefined, "bold");
+  } catch {}
   const titleLines = doc.splitTextToSize(cleanTitle, pageWidth - margin * 2);
   doc.text(titleLines, margin, y);
   y += 24;
-  try { doc.setFont(undefined, "normal"); } catch {}
+  try {
+    doc.setFont(undefined, "normal");
+  } catch {}
 
   doc.setFontSize(12);
   const maxWidth = pageWidth - margin * 2;
@@ -851,7 +865,8 @@ function copyResult() {
 }
 
 function downloadResultTXT() {
-  const title = document.getElementById("resultModalTitle")?.innerText || "Hasil";
+  const title =
+    document.getElementById("resultModalTitle")?.innerText || "Hasil";
   const text = document.getElementById("resultModalBody")?.innerText || "";
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -865,7 +880,8 @@ function downloadResultTXT() {
 }
 
 function downloadResultPDF() {
-  const title = document.getElementById("resultModalTitle")?.innerText || "Hasil";
+  const title =
+    document.getElementById("resultModalTitle")?.innerText || "Hasil";
   const text = document.getElementById("resultModalBody")?.innerText || "";
   downloadTextAsPDF(title, text).catch(() => {
     alert("Gagal membuat PDF. Coba lagi.");
@@ -920,7 +936,8 @@ async function loadFeatureHistory(feature, containerSelector) {
       };
 
       const titleDiv = document.createElement("div");
-      titleDiv.style.cssText = "font-weight: bold; font-size: 14px; margin-bottom: 4px;";
+      titleDiv.style.cssText =
+        "font-weight: bold; font-size: 14px; margin-bottom: 4px;";
       titleDiv.textContent = item.title || "Tanpa judul";
 
       const metaDiv = document.createElement("div");
@@ -938,7 +955,9 @@ async function loadFeatureHistory(feature, containerSelector) {
 
       div.addEventListener("click", async () => {
         try {
-          const detailRes = await apiFetch(`/api/history/${feature}/${item.id}`);
+          const detailRes = await apiFetch(
+            `/api/history/${feature}/${item.id}`
+          );
           const detail = await detailRes.json();
           openResultModal(detail.title, detail.content);
         } catch (e) {
